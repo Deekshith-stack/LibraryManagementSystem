@@ -2,6 +2,7 @@
   "name": "library-management-system",
   "private": true,
   "version": "1.0.0",
+  "homepage": "https://deekshith-stack.github.io/LMS",
   "type": "module",
   "scripts": {
     "dev": "vite",
