@@ -3,7 +3,7 @@
 A modern, responsive, and feature-rich Library Management System built with **React**, **Vite**, and **Lucide Icons**.
 
 ## 🌐 Live Demo
-👉 **[Live Application](https://deekshith-stack.github.io/LMS/)**
+👉 **[Live Application](https://deekshith-stack.github.io/LibraryManagementSystem/)**
 
 ---
 
@@ -40,10 +40,10 @@ A modern, responsive, and feature-rich Library Management System built with **Re
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/Deekshith-stack/LMS.git
+git clone https://github.com/Deekshith-stack/LibraryManagementSystem.git
 
 # Navigate into project directory
-cd LMS
+cd LibraryManagementSystem
 
 # Install dependencies
 npm install
