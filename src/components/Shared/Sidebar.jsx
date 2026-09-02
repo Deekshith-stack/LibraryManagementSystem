@@ -13,12 +13,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
-  Flame,
-  Layers
+  Zap,
+  Globe
 } from 'lucide-react';
 
 export const Sidebar = ({ currentTab, setCurrentTab, isCollapsed, onToggleCollapse }) => {
-  const { currentUser } = useContext(LibraryContext);
+  const { currentUser, changeCurrentUser, users } = useContext(LibraryContext);
 
   // Define tabs based on role
   const getTabsByRole = (role) => {
@@ -72,12 +72,12 @@ export const Sidebar = ({ currentTab, setCurrentTab, isCollapsed, onToggleCollap
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       {/* Header */}
       <div className="sidebar-header">
-        <div className="sidebar-logo">
-          <Layers size={22} />
+        <div className="sidebar-logo" style={{ background: 'var(--gradient-aetheria)' }}>
+          <Zap size={20} />
         </div>
         {!isCollapsed && (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span className="sidebar-title gradient-text">LUMINA OS</span>
+            <span className="sidebar-title gradient-text">AETHERIA</span>
             <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               {roleBadge.name}
             </span>
@@ -121,8 +121,8 @@ export const Sidebar = ({ currentTab, setCurrentTab, isCollapsed, onToggleCollap
           <div 
             onClick={() => setCurrentTab('student-dashboard')}
             style={{ 
-              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.14) 0%, rgba(6, 182, 212, 0.1) 100%)',
-              border: '1px solid rgba(99, 102, 241, 0.3)',
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
+              border: '1px solid rgba(99, 102, 241, 0.25)',
               borderRadius: '14px',
               padding: '0.85rem',
               cursor: 'pointer',
@@ -146,7 +146,7 @@ export const Sidebar = ({ currentTab, setCurrentTab, isCollapsed, onToggleCollap
       {/* Footer Profile */}
       <div className="sidebar-footer">
         <div className="sidebar-user">
-          <div className="sidebar-avatar">
+          <div className="sidebar-avatar" style={{ background: currentUser?.role === 'admin' ? 'var(--gradient-apex)' : currentUser?.role === 'librarian' ? 'var(--gradient-circulation)' : 'var(--gradient-scholar)' }}>
             {userInitials}
           </div>
           {!isCollapsed && (

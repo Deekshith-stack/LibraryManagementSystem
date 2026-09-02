@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
 import { 
   Search, 
@@ -6,11 +6,13 @@ import {
   GraduationCap, 
   BookMarked, 
   ShieldCheck, 
-  Users, 
   Menu, 
   Sparkles, 
   ChevronRight,
-  UserCheck
+  UserCheck,
+  Check,
+  Clock,
+  Layers
 } from 'lucide-react';
 import NotificationCenterModal from './NotificationCenterModal';
 
@@ -19,7 +21,6 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
     currentUser, 
     users, 
     changeCurrentUser, 
-    sessions,
     notifications,
     markNotificationRead,
     markAllNotificationsRead,
@@ -28,28 +29,32 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
 
   const [isNotifDropdownOpen, setIsNotifDropdownOpen] = useState(false);
   const [isNotifModalOpen, setIsNotifModalOpen] = useState(false);
+  const [isPersonaOpen, setIsPersonaOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState('');
 
-  const userSession = (sessions && sessions[currentUser?.id]) || { login: '09:00 AM', logout: 'Never' };
-  
-  // Filter notifications corresponding to the active role
+  // Update clock every minute
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setCurrentTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    };
+    updateTime();
+    const timer = setInterval(updateTime, 10000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Filter notifications for active role
   const roleNotifications = notifications ? notifications.filter(n => n.role === currentUser?.role) : [];
   const unreadCount = roleNotifications.filter(n => !n.read).length;
 
-  // Switch role defaults
-  const handleRoleSelect = (selectedRole) => {
-    const defaultUserOfRole = users.find(u => u.role === selectedRole);
-    if (defaultUserOfRole) {
-      changeCurrentUser(defaultUserOfRole.id);
-      setIsNotifDropdownOpen(false);
+  // Switch persona handler
+  const handlePersonaSelect = (roleName) => {
+    const targetUser = users.find(u => u.role === roleName);
+    if (targetUser) {
+      changeCurrentUser(targetUser.id);
+      setIsPersonaOpen(false);
     }
   };
-
-  const handleUserChange = (e) => {
-    changeCurrentUser(e.target.value);
-    setIsNotifDropdownOpen(false);
-  };
-
-  const usersOfCurrentRole = users.filter(u => u.role === currentUser?.role);
 
   const handleQuickNotifClick = (notif) => {
     markNotificationRead(notif.id);
@@ -59,6 +64,21 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
     setIsNotifDropdownOpen(false);
   };
 
+  const userName = currentUser?.name || 'User';
+  const userInitials = userName.substring(0, 2).toUpperCase();
+
+  const getRoleInfo = (role) => {
+    switch (role) {
+      case 'student': return { label: 'Scholar', color: 'cyan', icon: GraduationCap };
+      case 'librarian': return { label: 'Circulation', color: 'green', icon: BookMarked };
+      case 'admin': return { label: 'Apex Admin', color: 'purple', icon: ShieldCheck };
+      default: return { label: 'Member', color: 'indigo', icon: UserCheck };
+    }
+  };
+
+  const activeRoleInfo = getRoleInfo(currentUser?.role || 'student');
+  const ActiveIcon = activeRoleInfo.icon;
+
   return (
     <>
       <nav className="navbar">
@@ -67,19 +87,19 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
           <button 
             className="navbar-toggle-btn"
             onClick={onToggleSidebar}
-            title={isSidebarCollapsed ? "Unhide Sidebar" : "Hide Sidebar"}
+            title={isSidebarCollapsed ? "Expand Sidebar (Unhide)" : "Collapse Sidebar (Hide)"}
             aria-label="Toggle Sidebar"
           >
             <Menu size={20} />
           </button>
 
-          {/* Search bar with Ctrl+K */}
+          {/* Global Quick Search bar with Ctrl+K */}
           <div className="search-container">
-            <Search size={18} />
+            <Search size={17} />
             <input
               type="text"
               className="glass-input"
-              placeholder="Search Lumina Catalog..."
+              placeholder="Quick search catalog..."
               value={searchVal || ''}
               onChange={(e) => setSearchVal && setSearchVal(e.target.value)}
             />
@@ -88,70 +108,23 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
         </div>
 
         <div className="navbar-right">
-          {/* Interactive Role Switcher Pills */}
-          <div className="role-pill-group" title="Switch Portal Environment">
-            <button
-              className={`role-pill-btn ${currentUser?.role === 'student' ? 'active student' : ''}`}
-              onClick={() => handleRoleSelect('student')}
-            >
-              <GraduationCap size={15} />
-              <span>Scholar</span>
-            </button>
-            <button
-              className={`role-pill-btn ${currentUser?.role === 'librarian' ? 'active librarian' : ''}`}
-              onClick={() => handleRoleSelect('librarian')}
-            >
-              <BookMarked size={15} />
-              <span>Circulation</span>
-            </button>
-            <button
-              className={`role-pill-btn ${currentUser?.role === 'admin' ? 'active admin' : ''}`}
-              onClick={() => handleRoleSelect('admin')}
-            >
-              <ShieldCheck size={15} />
-              <span>Apex Admin</span>
-            </button>
-          </div>
-
-          {/* User selector if multiple exist in role */}
-          {usersOfCurrentRole.length > 1 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(15, 23, 42, 0.65)', border: '1px solid var(--border-color)', padding: '0.3rem 0.65rem', borderRadius: '12px' }}>
-              <Users size={14} style={{ color: 'var(--accent-indigo)' }} />
-              <select 
-                className="role-select" 
-                value={currentUser?.id} 
-                onChange={handleUserChange}
-                style={{ fontSize: '0.8rem' }}
-              >
-                {usersOfCurrentRole.map(u => (
-                  <option key={u.id} value={u.id}>
-                    {u.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Session Log Box */}
-          <div className="session-box">
-            <div className="session-time login">
-              <span className="dot green"></span>
-              <span>In: {userSession.login}</span>
-            </div>
-            <div className="session-time logout">
-              <span className="dot red"></span>
-              <span>Out: {userSession.logout}</span>
-            </div>
+          {/* Live System Status Pill */}
+          <div className="live-status-pill">
+            <span className="live-dot"></span>
+            <span>Live • {currentTime}</span>
           </div>
 
           {/* Notifications Bell Dropdown */}
           <div style={{ position: 'relative' }}>
             <button 
               className={`notif-btn ${unreadCount > 0 ? 'has-unread' : ''}`} 
-              onClick={() => setIsNotifDropdownOpen(!isNotifDropdownOpen)}
+              onClick={() => {
+                setIsNotifDropdownOpen(!isNotifDropdownOpen);
+                setIsPersonaOpen(false);
+              }}
               title="Notifications"
             >
-              <Bell size={20} />
+              <Bell size={19} />
               {unreadCount > 0 && (
                 <span className="notif-count">{unreadCount}</span>
               )}
@@ -244,6 +217,97 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                     }}
                   >
                     Open Full Notification Center <ChevronRight size={13} />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Luxury Profile Avatar & Persona Switcher */}
+          <div style={{ position: 'relative' }}>
+            <button 
+              className="nav-profile-btn"
+              onClick={() => {
+                setIsPersonaOpen(!isPersonaOpen);
+                setIsNotifDropdownOpen(false);
+              }}
+              title="Switch Persona / Account"
+            >
+              <div className={`nav-profile-avatar ${currentUser?.role}`}>
+                {userInitials}
+              </div>
+              <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
+                <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  {userName}
+                </div>
+                <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'capitalize' }}>
+                  {activeRoleInfo.label}
+                </div>
+              </div>
+              <ActiveIcon size={14} style={{ color: `var(--accent-${activeRoleInfo.color})`, marginLeft: '0.2rem' }} />
+            </button>
+
+            {/* Persona Switcher Popover */}
+            {isPersonaOpen && (
+              <div className="persona-popover">
+                <div className="persona-header">
+                  <div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'Outfit, sans-serif' }}>
+                      Switch Persona
+                    </div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                      Select account environment
+                    </div>
+                  </div>
+                  <span className={`badge ${activeRoleInfo.color}`} style={{ fontSize: '0.65rem' }}>
+                    {currentUser?.role}
+                  </span>
+                </div>
+
+                <div className="persona-options">
+                  {/* Student Option */}
+                  <button 
+                    className={`persona-option ${currentUser?.role === 'student' ? 'active' : ''}`}
+                    onClick={() => handlePersonaSelect('student')}
+                  >
+                    <div className="persona-icon-box student">
+                      <GraduationCap size={18} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>Scholar Account ("a")</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Borrow books, recommendations, fines</div>
+                    </div>
+                    {currentUser?.role === 'student' && <Check size={16} style={{ color: 'var(--accent-cyan)' }} />}
+                  </button>
+
+                  {/* Librarian Option */}
+                  <button 
+                    className={`persona-option ${currentUser?.role === 'librarian' ? 'active' : ''}`}
+                    onClick={() => handlePersonaSelect('librarian')}
+                  >
+                    <div className="persona-icon-box librarian">
+                      <BookMarked size={18} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>Head Librarian</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Inventory, check-outs & hold queue</div>
+                    </div>
+                    {currentUser?.role === 'librarian' && <Check size={16} style={{ color: 'var(--accent-green)' }} />}
+                  </button>
+
+                  {/* Admin Option */}
+                  <button 
+                    className={`persona-option ${currentUser?.role === 'admin' ? 'active' : ''}`}
+                    onClick={() => handlePersonaSelect('admin')}
+                  >
+                    <div className="persona-icon-box admin">
+                      <ShieldCheck size={18} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>Apex Administrator</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Analytics, member directory & policies</div>
+                    </div>
+                    {currentUser?.role === 'admin' && <Check size={16} style={{ color: 'var(--accent-purple)' }} />}
                   </button>
                 </div>
               </div>
