@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
-import { ArrowLeftRight, CheckCircle2, AlertTriangle, Calendar, Plus, User, Mail, RefreshCw } from 'lucide-react';
+import { ArrowLeftRight, CheckCircle2, AlertTriangle, Calendar, Plus, User, Mail, RefreshCw, Clock } from 'lucide-react';
 import { Modal } from '../Shared/Modal';
 
 export const IssueReturn = () => {
@@ -51,6 +51,12 @@ export const IssueReturn = () => {
     setIsIssueModalOpen(true);
   };
 
+  const handleSetDueDays = (days) => {
+    const d = new Date();
+    d.setDate(d.getDate() + days);
+    setDueDate(d.toISOString().split('T')[0]);
+  };
+
   const handleIssueSubmit = (e) => {
     e.preventDefault();
     if (!studentId || !bookId || !dueDate) return;
@@ -67,7 +73,7 @@ export const IssueReturn = () => {
   };
 
   const handleReturn = (txId) => {
-    if (window.confirm("Complete book return process?")) {
+    if (window.confirm("Complete book check-in process?")) {
       returnBook(txId);
     }
   };
@@ -86,12 +92,14 @@ export const IssueReturn = () => {
     <div className="animate-fade-in">
       <div className="flex-between" style={{ marginBottom: '2rem' }}>
         <div>
-          <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>Issue & Return Desk</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Check books in and out, track deadlines, and monitor overdue loans.</p>
+          <h1 className="gradient-text-circulation" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
+            Circulation Operations Desk
+          </h1>
+          <p style={{ color: 'var(--text-secondary)' }}>Check books in and out, set lending windows, and monitor overdue patron accounts.</p>
         </div>
 
-        <button className="btn-premium primary" onClick={handleOpenIssue}>
-          <Plus size={18} /> Issue Book
+        <button className="btn-premium primary" style={{ background: 'var(--gradient-circulation)' }} onClick={handleOpenIssue}>
+          <Plus size={18} /> Check Out Book
         </button>
       </div>
 
@@ -107,15 +115,15 @@ export const IssueReturn = () => {
           className={`tab-btn ${activeTab === 'return-history' ? 'active' : ''}`}
           onClick={() => setActiveTab('return-history')}
         >
-          Return History ({historyTxs.length})
+          Return History Archive ({historyTxs.length})
         </button>
       </div>
 
       {activeTab === 'active-loans' ? (
         <div className="glass-card">
           <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: 0 }}>
-              <ArrowLeftRight size={20} className="gradient-text" /> Outstanding Loans
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: 0, fontFamily: 'Outfit, sans-serif' }}>
+              <ArrowLeftRight size={20} className="gradient-text-circulation" /> Outstanding Circulation Loans
             </h2>
 
             <label className="flex-align" style={{ gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', cursor: 'pointer' }}>
@@ -125,15 +133,15 @@ export const IssueReturn = () => {
                 onChange={(e) => setOverdueOnly(e.target.checked)}
                 style={{ cursor: 'pointer' }}
               />
-              <span>Filter Overdue Only</span>
+              <span>Filter Overdue Accounts</span>
             </label>
           </div>
 
           {filteredActiveTxs.length === 0 ? (
             <div className="empty-state">
               <CheckCircle2 size={40} className="empty-state-icon" style={{ color: 'var(--accent-green)' }} />
-              <h3 className="empty-state-title">No Loans Found</h3>
-              <p className="empty-state-desc">No active borrow transaction logs match the selected filters.</p>
+              <h3 className="empty-state-title">No Active Loans</h3>
+              <p className="empty-state-desc">All books are in stock or no circulation records match the filter.</p>
             </div>
           ) : (
             <div className="table-container">
@@ -156,14 +164,14 @@ export const IssueReturn = () => {
                       <tr key={tx.id}>
                         <td>
                           <div>
-                            <div style={{ fontWeight: 600 }}>{tx.studentName}</div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>ID: {tx.studentId.substring(5, 13)}</div>
+                            <div style={{ fontWeight: 700 }}>{tx.studentName}</div>
+                            <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>ID: {tx.studentId.substring(5, 13)}</div>
                           </div>
                         </td>
                         <td style={{ fontWeight: 600 }}>{tx.bookTitle}</td>
                         <td>{tx.issueDate}</td>
                         <td>{tx.dueDate}</td>
-                        <td style={{ color: tx.fineAmount > 0 ? 'var(--accent-red)' : 'inherit', fontWeight: tx.fineAmount > 0 ? 600 : 400 }}>
+                        <td style={{ color: tx.fineAmount > 0 ? 'var(--accent-red)' : 'inherit', fontWeight: tx.fineAmount > 0 ? 800 : 400 }}>
                           ₹{tx.fineAmount.toFixed(2)}
                         </td>
                         <td>
@@ -176,7 +184,7 @@ export const IssueReturn = () => {
                             {isOverdue && (
                               <button
                                 className="btn-premium secondary"
-                                style={{ padding: '0.4rem', borderRadius: '6px' }}
+                                style={{ padding: '0.4rem', borderRadius: '8px' }}
                                 title="Send Overdue Reminder"
                                 onClick={() => handleSendNotice(tx.id)}
                               >
@@ -185,7 +193,7 @@ export const IssueReturn = () => {
                             )}
                             <button
                               className="btn-premium secondary"
-                              style={{ padding: '0.4rem', borderRadius: '6px' }}
+                              style={{ padding: '0.4rem', borderRadius: '8px' }}
                               title="Renew Loan (Extend 7 Days)"
                               onClick={() => handleRenew(tx.id)}
                             >
@@ -193,7 +201,7 @@ export const IssueReturn = () => {
                             </button>
                             <button
                               className="btn-premium success"
-                              style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', borderRadius: '6px' }}
+                              style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderRadius: '8px' }}
                               onClick={() => handleReturn(tx.id)}
                             >
                               Check In
@@ -210,11 +218,11 @@ export const IssueReturn = () => {
         </div>
       ) : (
         <div className="glass-card">
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.25rem' }}>Transaction History Log</h2>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', fontFamily: 'Outfit, sans-serif' }}>Check-In Archive History</h2>
 
           {historyTxs.length === 0 ? (
             <div className="empty-state">
-              <p className="empty-state-desc">No books have been checked in yet during this session.</p>
+              <p className="empty-state-desc">No books have been returned yet during this operational session.</p>
             </div>
           ) : (
             <div className="table-container">
@@ -226,7 +234,7 @@ export const IssueReturn = () => {
                     <th>Issue Date</th>
                     <th>Due Date</th>
                     <th>Return Date</th>
-                    <th>Fine Paid</th>
+                    <th>Fine Settled</th>
                     <th>Status</th>
                   </tr>
                 </thead>
@@ -235,17 +243,17 @@ export const IssueReturn = () => {
                     <tr key={tx.id}>
                       <td>
                         <div>
-                          <div style={{ fontWeight: 500 }}>{tx.studentName}</div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>ID: {tx.studentId.substring(5, 13)}</div>
+                          <div style={{ fontWeight: 600 }}>{tx.studentName}</div>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>ID: {tx.studentId.substring(5, 13)}</div>
                         </div>
                       </td>
-                      <td style={{ fontWeight: 500 }}>{tx.bookTitle}</td>
+                      <td style={{ fontWeight: 600 }}>{tx.bookTitle}</td>
                       <td>{tx.issueDate}</td>
                       <td>{tx.dueDate}</td>
-                      <td style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>{tx.returnDate}</td>
+                      <td style={{ color: 'var(--accent-cyan)', fontWeight: 700 }}>{tx.returnDate}</td>
                       <td>
                         {tx.fineAmount > 0 ? (
-                          <span style={{ color: 'var(--accent-red)', fontWeight: 600 }}>₹{tx.fineAmount.toFixed(2)}</span>
+                          <span style={{ color: 'var(--accent-red)', fontWeight: 700 }}>₹{tx.fineAmount.toFixed(2)}</span>
                         ) : (
                           <span style={{ color: 'var(--text-muted)' }}>₹0.00</span>
                         )}
@@ -266,27 +274,27 @@ export const IssueReturn = () => {
       <Modal
         isOpen={isIssueModalOpen}
         onClose={() => setIsIssueModalOpen(false)}
-        title="Issue Book to Student"
+        title="Check Out Circulation Item"
       >
         <form onSubmit={handleIssueSubmit}>
           {errorMsg && (
-            <div style={{ background: 'rgba(244, 63, 94, 0.1)', border: '1px solid var(--accent-red)', color: 'var(--accent-red)', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ background: 'rgba(244, 63, 94, 0.1)', border: '1px solid var(--accent-red)', color: 'var(--accent-red)', padding: '0.75rem', borderRadius: '10px', marginBottom: '1rem', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <AlertTriangle size={16} />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {successMsg && (
-            <div style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid var(--accent-green)', color: 'var(--accent-green)', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ background: 'rgba(16, 185, 129, 0.1)', border: '1px solid var(--accent-green)', color: 'var(--accent-green)', padding: '0.75rem', borderRadius: '10px', marginBottom: '1rem', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <CheckCircle2 size={16} />
               <span>{successMsg}</span>
             </div>
           )}
 
           <div className="form-group">
-            <label className="form-label">Select Student Profile</label>
+            <label className="form-label">Select Borrower Profile</label>
             {activeStudents.length === 0 ? (
-              <p style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>No active/un-suspended students found in Directory.</p>
+              <p style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>No active patrons found in directory.</p>
             ) : (
               <select
                 className="glass-input glass-select"
@@ -294,7 +302,7 @@ export const IssueReturn = () => {
                 onChange={(e) => setStudentId(e.target.value)}
                 required
               >
-                <option value="" disabled>-- Select Student --</option>
+                <option value="" disabled>-- Select Patron --</option>
                 {activeStudents.map(stu => (
                   <option key={stu.id} value={stu.id}>{stu.name} ({stu.enrollmentId})</option>
                 ))}
@@ -303,9 +311,9 @@ export const IssueReturn = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Select Book Title</label>
+            <label className="form-label">Select Catalog Title</label>
             {availableBooks.length === 0 ? (
-              <p style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>No available books in stock.</p>
+              <p style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>No inventory copies currently available.</p>
             ) : (
               <select
                 className="glass-input glass-select"
@@ -313,7 +321,7 @@ export const IssueReturn = () => {
                 onChange={(e) => setBookId(e.target.value)}
                 required
               >
-                <option value="" disabled>-- Select Book --</option>
+                <option value="" disabled>-- Select Volume --</option>
                 {availableBooks.map(b => (
                   <option key={b.id} value={b.id}>{b.title} by {b.author} ({b.copiesAvailable} left)</option>
                 ))}
@@ -323,25 +331,46 @@ export const IssueReturn = () => {
 
           <div className="form-group">
             <label className="form-label">Return Due Date</label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type="date"
-                className="glass-input"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                required
-              />
+            <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.5rem' }}>
+              <button
+                type="button"
+                className="btn-premium secondary"
+                style={{ flex: 1, padding: '0.35rem', fontSize: '0.75rem', borderRadius: '8px' }}
+                onClick={() => handleSetDueDays(7)}
+              >
+                +7 Days
+              </button>
+              <button
+                type="button"
+                className="btn-premium secondary"
+                style={{ flex: 1, padding: '0.35rem', fontSize: '0.75rem', borderRadius: '8px' }}
+                onClick={() => handleSetDueDays(14)}
+              >
+                +14 Days
+              </button>
+              <button
+                type="button"
+                className="btn-premium secondary"
+                style={{ flex: 1, padding: '0.35rem', fontSize: '0.75rem', borderRadius: '8px' }}
+                onClick={() => handleSetDueDays(30)}
+              >
+                +30 Days
+              </button>
             </div>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
-              * Default borrow period is {settings.borrowPeriodDays} days.
-            </p>
+            <input
+              type="date"
+              className="glass-input"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+              required
+            />
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
             <button type="button" className="btn-premium secondary" onClick={() => setIsIssueModalOpen(false)}>
               Cancel
             </button>
-            <button type="submit" className="btn-premium primary" disabled={activeStudents.length === 0 || availableBooks.length === 0}>
+            <button type="submit" className="btn-premium primary" style={{ background: 'var(--gradient-circulation)' }} disabled={activeStudents.length === 0 || availableBooks.length === 0}>
               Complete Checkout
             </button>
           </div>

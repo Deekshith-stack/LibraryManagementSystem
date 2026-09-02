@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
-import { Search, Filter, BookOpen, Clock, Check, AlertCircle, Bookmark, Star, MessageSquare, Send, Sparkles } from 'lucide-react';
+import { Search, Filter, BookOpen, Clock, Check, AlertCircle, Bookmark, Star, MessageSquare, Send, Sparkles, Layers } from 'lucide-react';
 import { Modal } from '../Shared/Modal';
 
 export const StudentCatalog = ({ searchVal }) => {
@@ -60,7 +60,6 @@ export const StudentCatalog = ({ searchVal }) => {
 
     addBookReview(selectedBookForDetail.id, currentUser.name, userRating, userComment);
     
-    // Refresh modal data
     setSelectedBookForDetail({
       ...selectedBookForDetail,
       reviews: [
@@ -99,19 +98,21 @@ export const StudentCatalog = ({ searchVal }) => {
 
   return (
     <div className="animate-fade-in">
-      <div className="flex-between" style={{ marginBottom: '2rem' }}>
+      <div className="flex-between" style={{ marginBottom: '1.75rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>Library Catalog</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Discover books, read student reviews, and manage your wishlist.</p>
+          <h1 className="gradient-text-scholar" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
+            Lumina Library Catalog
+          </h1>
+          <p style={{ color: 'var(--text-secondary)' }}>Explore curated knowledge volumes, reader ratings, and bookmark favorite editions.</p>
         </div>
 
         {/* Category Filter */}
-        <div className="flex-align" style={{ background: 'rgba(15, 23, 42, 0.4)', padding: '0.5rem 1rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+        <div className="flex-align" style={{ background: 'rgba(15, 23, 42, 0.6)', padding: '0.5rem 1rem', borderRadius: '14px', border: '1px solid var(--border-color)' }}>
           <Filter size={16} style={{ color: 'var(--text-secondary)' }} />
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Category:</span>
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Category:</span>
           <select 
             className="role-select" 
-            style={{ paddingRight: '1rem', fontWeight: 500 }}
+            style={{ paddingRight: '1rem', fontWeight: 600 }}
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
           >
@@ -128,7 +129,7 @@ export const StudentCatalog = ({ searchVal }) => {
           className={`tab-btn ${catalogTab === 'all' ? 'active' : ''}`}
           onClick={() => setCatalogTab('all')}
         >
-          All Library Catalog
+          All Catalog ({books.length})
         </button>
         <button 
           className={`tab-btn ${catalogTab === 'recommended' ? 'active' : ''}`}
@@ -141,6 +142,7 @@ export const StudentCatalog = ({ searchVal }) => {
           className={`tab-btn ${catalogTab === 'wishlist' ? 'active' : ''}`}
           onClick={() => setCatalogTab('wishlist')}
         >
+          <Bookmark size={14} style={{ display: 'inline', marginRight: '4px' }} />
           My Wishlist Bookmarks
         </button>
       </div>
@@ -148,11 +150,11 @@ export const StudentCatalog = ({ searchVal }) => {
       {filteredBooks.length === 0 ? (
         <div className="glass-card empty-state" style={{ padding: '4rem 2rem' }}>
           <BookOpen className="empty-state-icon" />
-          <h3 className="empty-state-title">No books found</h3>
+          <h3 className="empty-state-title">No matching books found</h3>
           <p className="empty-state-desc">
             {catalogTab === 'wishlist' 
-              ? "Your bookmark wishlist is empty. Add books from the main catalog tab!"
-              : "We couldn't find any books matching your filters or search terms."
+              ? "Your bookmark wishlist is currently empty. Bookmark books to review them later!"
+              : "We couldn't find any books matching your search query or filters."
             }
           </p>
         </div>
@@ -171,7 +173,7 @@ export const StudentCatalog = ({ searchVal }) => {
                       <img src={book.coverImage} alt={book.title} className="book-cover-img" />
                     ) : (
                       <div className="book-cover-placeholder">
-                        <BookOpen size={32} className="placeholder-icon" />
+                        <BookOpen size={34} className="placeholder-icon" />
                         <span className="placeholder-title">{book.title}</span>
                       </div>
                     )}
@@ -181,24 +183,25 @@ export const StudentCatalog = ({ searchVal }) => {
                       className={`btn-premium`} 
                       style={{ 
                         position: 'absolute', 
-                        top: '8px', 
-                        right: '8px', 
+                        top: '10px', 
+                        right: '10px', 
                         padding: '0.4rem', 
                         borderRadius: '50%',
-                        background: isWish ? 'var(--gradient-purple-red)' : 'rgba(15, 23, 42, 0.75)',
+                        background: isWish ? 'var(--gradient-apex)' : 'rgba(11, 16, 28, 0.75)',
                         border: '1px solid var(--border-color)',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                        width: '32px',
-                        height: '32px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                        width: '34px',
+                        height: '34px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: isWish ? 'white' : 'var(--text-secondary)'
+                        color: isWish ? 'white' : 'var(--text-secondary)',
+                        backdropFilter: 'blur(8px)'
                       }}
                       onClick={() => toggleWishlist(currentUser.id, book.id)}
                       title={isWish ? "Remove Bookmark" : "Bookmark Book"}
                     >
-                      <Bookmark size={14} fill={isWish ? "white" : "none"} />
+                      <Bookmark size={15} fill={isWish ? "white" : "none"} />
                     </button>
                   </div>
 
@@ -207,20 +210,22 @@ export const StudentCatalog = ({ searchVal }) => {
                       {book.category}
                     </span>
                     {book.rating > 0 && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-orange)' }}>
-                        <Star size={12} fill="var(--accent-orange)" color="var(--accent-orange)" />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8rem', fontWeight: 800, color: 'var(--accent-orange)' }}>
+                        <Star size={13} fill="var(--accent-orange)" color="var(--accent-orange)" />
                         <span>{book.rating}</span>
                       </div>
                     )}
                   </div>
                   
-                  <h3 className="book-title">{book.title}</h3>
+                  <h3 className="book-title" onClick={() => handleOpenDetails(book)} style={{ cursor: 'pointer' }}>
+                    {book.title}
+                  </h3>
                   <p className="book-author">by {book.author}</p>
                   
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span>Location:</span>
-                      <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{book.location}</span>
+                      <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{book.location}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span>Stock Status:</span>
@@ -235,10 +240,10 @@ export const StudentCatalog = ({ searchVal }) => {
                   <div className="book-meta">
                     <button 
                       className="btn-premium secondary" 
-                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem', border: 'none', background: 'transparent', display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--accent-cyan)' }}
+                      style={{ padding: '0.35rem 0.65rem', fontSize: '0.78rem', border: 'none', background: 'transparent', display: 'flex', alignItems: 'center', gap: '0.3rem', color: 'var(--accent-cyan)' }}
                       onClick={() => handleOpenDetails(book)}
                     >
-                      <MessageSquare size={14} /> Reviews ({book.reviews?.length || 0})
+                      <MessageSquare size={13} /> Reviews ({book.reviews?.length || 0})
                     </button>
                     <span className="book-price">₹{book.price.toFixed(2)}</span>
                   </div>
@@ -279,30 +284,30 @@ export const StudentCatalog = ({ searchVal }) => {
         <Modal
           isOpen={isDetailModalOpen}
           onClose={() => setIsDetailModalOpen(false)}
-          title="Book Details & Student Reviews"
+          title="Volume Specifications & Reviews"
         >
           <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <div className="book-cover-container" style={{ width: '100px', height: '140px', flexShrink: 0, marginBottom: 0 }}>
+            <div style={{ display: 'flex', gap: '1.25rem' }}>
+              <div className="book-cover-container" style={{ width: '110px', height: '150px', flexShrink: 0, marginBottom: 0 }}>
                 {selectedBookForDetail.coverImage ? (
                   <img src={selectedBookForDetail.coverImage} alt={selectedBookForDetail.title} className="book-cover-img" />
                 ) : (
                   <div className="book-cover-placeholder">
-                    <BookOpen size={24} className="placeholder-icon" />
+                    <BookOpen size={28} className="placeholder-icon" />
                   </div>
                 )}
               </div>
               <div>
                 <span className="badge cyan" style={{ textTransform: 'none', marginBottom: '0.4rem' }}>{selectedBookForDetail.category}</span>
-                <h3 style={{ fontSize: '1.3rem', fontWeight: 800, lineHeight: 1.2 }}>{selectedBookForDetail.title}</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>by {selectedBookForDetail.author}</p>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, lineHeight: 1.25, fontFamily: 'Outfit, sans-serif' }}>{selectedBookForDetail.title}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>by {selectedBookForDetail.author}</p>
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                   {renderStars(selectedBookForDetail.rating || 0)}
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                     {selectedBookForDetail.rating > 0 ? `${selectedBookForDetail.rating} / 5` : 'No reviews'}
                   </span>
-                  <span style={{ marginLeft: 'auto', fontWeight: 800, fontSize: '1.1rem', color: 'var(--accent-cyan)' }}>
+                  <span style={{ marginLeft: 'auto', fontWeight: 800, fontSize: '1.15rem', color: 'var(--accent-cyan)' }}>
                     ₹{selectedBookForDetail.price.toFixed(2)}
                   </span>
                 </div>
@@ -311,8 +316,8 @@ export const StudentCatalog = ({ searchVal }) => {
             </div>
 
             {/* Write a review */}
-            <div style={{ background: 'rgba(255,255,255,0.015)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '1rem' }}>
-              <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '14px', padding: '1rem' }}>
+              <h4 style={{ fontSize: '0.875rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                 <Star size={14} style={{ color: 'var(--accent-orange)' }} /> Share your review
               </h4>
               
@@ -321,7 +326,7 @@ export const StudentCatalog = ({ searchVal }) => {
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Rating:</span>
                   <select 
                     className="glass-input glass-select" 
-                    style={{ width: '80px', padding: '0.25rem 1.5rem 0.25rem 0.5rem', fontSize: '0.85rem' }}
+                    style={{ width: '90px', padding: '0.25rem 1.5rem 0.25rem 0.5rem', fontSize: '0.825rem' }}
                     value={userRating}
                     onChange={(e) => setUserRating(parseInt(e.target.value))}
                   >
@@ -335,13 +340,13 @@ export const StudentCatalog = ({ searchVal }) => {
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <textarea 
                     className="glass-input" 
-                    placeholder="Write your comments about this book..." 
+                    placeholder="Write your review comments..." 
                     style={{ height: '60px', fontSize: '0.85rem', resize: 'none' }}
                     value={userComment}
                     onChange={(e) => setUserComment(e.target.value)}
                     required
                   />
-                  <button type="submit" className="btn-premium primary" style={{ padding: '0.5rem', borderRadius: '10px' }}>
+                  <button type="submit" className="btn-premium primary" style={{ padding: '0.5rem 0.8rem', borderRadius: '10px' }}>
                     <Send size={16} />
                   </button>
                 </div>
@@ -350,20 +355,20 @@ export const StudentCatalog = ({ searchVal }) => {
 
             {/* List Reviews */}
             <div>
-              <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '0.75rem' }}>
-                Reviews ({selectedBookForDetail.reviews?.length || 0})
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 800, marginBottom: '0.75rem' }}>
+                Reader Reviews ({selectedBookForDetail.reviews?.length || 0})
               </h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '200px', overflowY: 'auto', paddingRight: '0.25rem' }}>
                 {!selectedBookForDetail.reviews || selectedBookForDetail.reviews.length === 0 ? (
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
-                    No reviews submitted for this book yet. Be the first to share your thoughts!
+                    No reviews submitted for this title yet. Be the first to review!
                   </p>
                 ) : (
                   selectedBookForDetail.reviews.map(rev => (
-                    <div key={rev.id} style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.02)', padding: '0.75rem', borderRadius: '8px' }}>
+                    <div key={rev.id} style={{ background: 'rgba(255,255,255,0.015)', border: '1px solid rgba(255,255,255,0.03)', padding: '0.75rem', borderRadius: '10px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{rev.studentName}</span>
-                        <code style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{rev.date}</code>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>{rev.studentName}</span>
+                        <code style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>{rev.date}</code>
                       </div>
                       <div style={{ marginBottom: '0.4rem' }}>{renderStars(rev.rating)}</div>
                       <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{rev.comment}</p>

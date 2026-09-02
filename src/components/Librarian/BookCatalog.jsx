@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
 import { Modal } from '../Shared/Modal';
-import { Plus, Edit2, Trash2, Search, Library, Tag, AlertCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, Library, Tag, AlertCircle, BookMarked, Layers } from 'lucide-react';
 
 export const BookCatalog = ({ searchVal }) => {
   const { books, addBook, updateBook, deleteBook } = useContext(LibraryContext);
@@ -120,7 +120,7 @@ export const BookCatalog = ({ searchVal }) => {
   };
 
   const handleDelete = (bookId) => {
-    if (window.confirm("Are you sure you want to delete this book? This will cancel all pending student reservations for this title.")) {
+    if (window.confirm("Are you sure you want to delete this volume from circulation?")) {
       deleteBook(bookId);
     }
   };
@@ -128,7 +128,7 @@ export const BookCatalog = ({ searchVal }) => {
   const [stockFilter, setStockFilter] = useState('all'); // 'all' | 'low-stock'
 
   // Filtering books
-  const filteredBooks = books.filter(book => {
+  const filteredBooks = (books || []).filter(book => {
     const matchesSearch = 
       book.title.toLowerCase().includes((searchVal || '').toLowerCase()) ||
       book.author.toLowerCase().includes((searchVal || '').toLowerCase()) ||
@@ -142,16 +142,29 @@ export const BookCatalog = ({ searchVal }) => {
 
   return (
     <div className="animate-fade-in">
-      <div className="flex-between" style={{ marginBottom: '2rem' }}>
+      {/* Lumina Circulation Desk Identity Banner */}
+      <div className="portal-banner circulation">
         <div>
-          <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>Book Inventory</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Catalog new books, track stock levels, and organize shelf locations.</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+            <span className="badge green" style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem' }}>
+              LUMINA CIRCULATION DESK
+            </span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+              • Total Cataloged: <code style={{ color: 'var(--accent-green)' }}>{(books || []).length} Titles</code>
+            </span>
+          </div>
+          <h1 className="gradient-text-circulation" style={{ fontSize: '2.25rem', marginBottom: '0.35rem', lineHeight: 1.15 }}>
+            Book Inventory & Cataloger
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem', maxWidth: '600px' }}>
+            Catalog new editions, monitor inventory availability across shelf stacks, and maintain bibliographic data.
+          </p>
         </div>
 
         <div className="flex-align">
           <select 
             className="glass-input glass-select"
-            style={{ width: '160px', padding: '0.4rem 2rem 0.4rem 1rem', fontSize: '0.85rem' }}
+            style={{ width: '160px', padding: '0.45rem 2rem 0.45rem 1rem', fontSize: '0.85rem' }}
             value={stockFilter}
             onChange={(e) => setStockFilter(e.target.value)}
           >
@@ -159,8 +172,8 @@ export const BookCatalog = ({ searchVal }) => {
             <option value="low-stock">Out of Stock</option>
           </select>
           
-          <button className="btn-premium primary" onClick={handleOpenAdd}>
-            <Plus size={18} /> Add New Book
+          <button className="btn-premium primary" style={{ background: 'var(--gradient-circulation)' }} onClick={handleOpenAdd}>
+            <Plus size={18} /> Catalog New Book
           </button>
         </div>
       </div>
@@ -170,8 +183,8 @@ export const BookCatalog = ({ searchVal }) => {
         {filteredBooks.length === 0 ? (
           <div className="empty-state">
             <Library size={48} className="empty-state-icon" />
-            <h3 className="empty-state-title">No books match criteria</h3>
-            <p className="empty-state-desc">Try clearing search values or switching inventory filters.</p>
+            <h3 className="empty-state-title">No matching inventory records</h3>
+            <p className="empty-state-desc">Try clearing search terms or resetting inventory filters.</p>
           </div>
         ) : (
           <div className="table-container">
@@ -183,7 +196,7 @@ export const BookCatalog = ({ searchVal }) => {
                   <th>Category</th>
                   <th>Shelf Location</th>
                   <th>Price</th>
-                  <th>Availability</th>
+                  <th>Availability & Stock</th>
                   <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
@@ -192,22 +205,22 @@ export const BookCatalog = ({ searchVal }) => {
                   <tr key={book.id}>
                     <td>
                       <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{book.title}</div>
-                        <div style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>by {book.author}</div>
+                        <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{book.title}</div>
+                        <div style={{ color: 'var(--text-secondary)', fontSize: '0.825rem' }}>by {book.author}</div>
                       </div>
                     </td>
                     <td><code>{book.isbn}</code></td>
                     <td>
-                      <span className="badge cyan" style={{ gap: '0.3rem', fontSize: '0.75rem', textTransform: 'none', display: 'inline-flex', padding: '0.2rem 0.5rem' }}>
+                      <span className="badge cyan" style={{ gap: '0.3rem', fontSize: '0.725rem', textTransform: 'none', display: 'inline-flex', padding: '0.2rem 0.5rem' }}>
                         <Tag size={12} />
                         {book.category}
                       </span>
                     </td>
-                    <td style={{ fontWeight: 500 }}>{book.location}</td>
-                    <td>₹{book.price.toFixed(2)}</td>
+                    <td style={{ fontWeight: 600 }}>{book.location}</td>
+                    <td style={{ fontWeight: 700 }}>₹{book.price.toFixed(2)}</td>
                     <td>
                       <div className="flex-align" style={{ gap: '0.5rem' }}>
-                        <span className={`badge ${book.copiesAvailable > 0 ? 'green' : 'red'}`} style={{ padding: '0.15rem 0.5rem', fontSize: '0.75rem' }}>
+                        <span className={`badge ${book.copiesAvailable > 0 ? 'green' : 'red'}`} style={{ padding: '0.15rem 0.55rem', fontSize: '0.75rem' }}>
                           {book.copiesAvailable} / {book.totalCopies} Available
                         </span>
                         {book.copiesAvailable === 0 && (
@@ -221,7 +234,7 @@ export const BookCatalog = ({ searchVal }) => {
                       <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                         <button 
                           className="btn-premium secondary" 
-                          style={{ padding: '0.4rem', borderRadius: '6px' }}
+                          style={{ padding: '0.45rem', borderRadius: '8px' }}
                           title="Edit Book details"
                           onClick={() => handleOpenEdit(book)}
                         >
@@ -229,7 +242,7 @@ export const BookCatalog = ({ searchVal }) => {
                         </button>
                         <button 
                           className="btn-premium danger" 
-                          style={{ padding: '0.4rem', borderRadius: '6px' }}
+                          style={{ padding: '0.45rem', borderRadius: '8px' }}
                           title="Delete Book"
                           onClick={() => handleDelete(book.id)}
                         >
@@ -249,7 +262,7 @@ export const BookCatalog = ({ searchVal }) => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={modalMode === 'add' ? 'Catalog New Book' : 'Modify Book Details'}
+        title={modalMode === 'add' ? 'Catalog New Edition' : 'Update Bibliographic Data'}
       >
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -314,7 +327,7 @@ export const BookCatalog = ({ searchVal }) => {
               />
             </div>
             <div className="form-group">
-              <label className="form-label">Total Stock Copies</label>
+              <label className="form-label">Total Copies in Stock</label>
               <input 
                 type="number" 
                 min="1" 
@@ -389,8 +402,8 @@ export const BookCatalog = ({ searchVal }) => {
             <button type="button" className="btn-premium secondary" onClick={() => setIsModalOpen(false)}>
               Cancel
             </button>
-            <button type="submit" className="btn-premium primary">
-              {modalMode === 'add' ? 'Save Book' : 'Update Book'}
+            <button type="submit" className="btn-premium primary" style={{ background: 'var(--gradient-circulation)' }}>
+              {modalMode === 'add' ? 'Catalog Edition' : 'Save Modifications'}
             </button>
           </div>
         </form>

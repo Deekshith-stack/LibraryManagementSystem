@@ -5,7 +5,6 @@ import {
   LayoutDashboard, 
   BookMarked, 
   DollarSign, 
-  Library, 
   ArrowLeftRight, 
   Bookmark, 
   BarChart3, 
@@ -13,7 +12,9 @@ import {
   Settings2,
   ChevronLeft,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  Flame,
+  Layers
 } from 'lucide-react';
 
 export const Sidebar = ({ currentTab, setCurrentTab, isCollapsed, onToggleCollapse }) => {
@@ -24,30 +25,39 @@ export const Sidebar = ({ currentTab, setCurrentTab, isCollapsed, onToggleCollap
     switch (role) {
       case 'student':
         return [
-          { id: 'student-dashboard', label: 'Dashboard', icon: LayoutDashboard },
+          { id: 'student-dashboard', label: 'Scholar Dashboard', icon: LayoutDashboard },
           { id: 'student-catalog', label: 'Library Catalog', icon: BookOpen },
           { id: 'student-fines', label: 'Fines & Payments', icon: DollarSign }
         ];
       case 'librarian':
         return [
           { id: 'lib-catalog', label: 'Book Inventory', icon: BookMarked },
-          { id: 'lib-issue-return', label: 'Issue & Return', icon: ArrowLeftRight },
-          { id: 'lib-reservations', label: 'Reservations', icon: Bookmark }
+          { id: 'lib-issue-return', label: 'Issue & Return Desk', icon: ArrowLeftRight },
+          { id: 'lib-reservations', label: 'Hold Queue', icon: Bookmark }
         ];
       case 'admin':
         return [
-          { id: 'admin-dashboard', label: 'System Analytics', icon: BarChart3 },
+          { id: 'admin-dashboard', label: 'Apex Analytics', icon: BarChart3 },
           { id: 'admin-users', label: 'User Directory', icon: Users },
-          { id: 'admin-settings', label: 'Library Settings', icon: Settings2 }
+          { id: 'admin-settings', label: 'Circulation Policies', icon: Settings2 }
         ];
       default:
         return [];
     }
   };
 
-  const menuItems = getTabsByRole(currentUser?.role || 'student');
+  const getRoleBadge = (role) => {
+    switch (role) {
+      case 'student': return { name: 'Scholar Edition', color: 'cyan' };
+      case 'librarian': return { name: 'Circulation Ops', color: 'green' };
+      case 'admin': return { name: 'Apex Console', color: 'purple' };
+      default: return { name: 'Edition', color: 'indigo' };
+    }
+  };
 
-  // Set default tab if current one is not applicable to current role
+  const menuItems = getTabsByRole(currentUser?.role || 'student');
+  const roleBadge = getRoleBadge(currentUser?.role || 'student');
+
   React.useEffect(() => {
     const ids = menuItems.map(m => m.id);
     if (!ids.includes(currentTab)) {
@@ -63,20 +73,25 @@ export const Sidebar = ({ currentTab, setCurrentTab, isCollapsed, onToggleCollap
       {/* Header */}
       <div className="sidebar-header">
         <div className="sidebar-logo">
-          <Library size={20} />
+          <Layers size={22} />
         </div>
         {!isCollapsed && (
-          <span className="sidebar-title gradient-text">LIBRARY LMS</span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span className="sidebar-title gradient-text">LUMINA OS</span>
+            <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              {roleBadge.name}
+            </span>
+          </div>
         )}
 
-        {/* Toggle Collapse Button inside header */}
+        {/* Toggle Collapse Button */}
         <button 
           className="sidebar-collapse-btn"
           onClick={onToggleCollapse}
           title={isCollapsed ? "Expand Sidebar (Unhide)" : "Collapse Sidebar (Hide)"}
           aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
-          {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          {isCollapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
         </button>
       </div>
 
@@ -100,26 +115,29 @@ export const Sidebar = ({ currentTab, setCurrentTab, isCollapsed, onToggleCollap
         })}
       </ul>
 
-      {/* Smart Recommendations Badge on Student Sidebar */}
+      {/* Scholar AI Badge */}
       {currentUser?.role === 'student' && !isCollapsed && (
-        <div style={{ padding: '0 1rem', marginBottom: '1rem' }}>
+        <div style={{ padding: '0 1rem', marginBottom: '1.25rem' }}>
           <div 
             onClick={() => setCurrentTab('student-dashboard')}
             style={{ 
-              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
-              border: '1px solid rgba(99, 102, 241, 0.25)',
-              borderRadius: '12px',
-              padding: '0.75rem',
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.14) 0%, rgba(6, 182, 212, 0.1) 100%)',
+              border: '1px solid rgba(99, 102, 241, 0.3)',
+              borderRadius: '14px',
+              padding: '0.85rem',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.6rem'
+              gap: '0.65rem',
+              transition: 'all 0.2s ease'
             }}
           >
-            <Sparkles size={16} style={{ color: 'var(--accent-purple)', flexShrink: 0 }} />
+            <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'rgba(168, 85, 247, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Sparkles size={16} style={{ color: 'var(--accent-purple)' }} />
+            </div>
             <div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>AI Recommendations</div>
-              <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Top matched books</div>
+              <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-primary)' }}>AI Recommendations</div>
+              <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)' }}>Personalized matches</div>
             </div>
           </div>
         </div>
@@ -136,8 +154,8 @@ export const Sidebar = ({ currentTab, setCurrentTab, isCollapsed, onToggleCollap
               <div className="sidebar-user-name" title={userName}>
                 {userName}
               </div>
-              <span className="sidebar-user-role">
-                {currentUser?.role === 'admin' ? 'Administrator' : currentUser?.role}
+              <span className={`badge ${roleBadge.color}`} style={{ fontSize: '0.62rem', padding: '0.1rem 0.4rem', marginTop: '0.2rem' }}>
+                {currentUser?.role}
               </span>
             </div>
           )}

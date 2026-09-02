@@ -1,51 +1,49 @@
 import React, { useContext } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
-import { Bookmark, Check, X, AlertCircle } from 'lucide-react';
+import { Bookmark, Check, X, Clock, CheckCircle2, User, BookOpen } from 'lucide-react';
 
 export const Reservations = () => {
-  const { reservations, updateReservationStatus, books } = useContext(LibraryContext);
+  const { reservations, books, users, approveReservation, rejectReservation } = useContext(LibraryContext);
 
-  const handleApprove = (res) => {
-    const book = books.find(b => b.id === res.bookId);
-    if (book && book.copiesAvailable <= 0) {
-      alert("Error: Book is currently out of stock. Cannot approve reservation.");
-      return;
-    }
-    try {
-      updateReservationStatus(res.id, 'approved');
-      alert(`Reservation approved! "${res.bookTitle}" has been checked out and issued to ${res.studentName}.`);
-    } catch (err) {
-      alert(`Approval failed: ${err.message}`);
-    }
+  const pendingReservations = (reservations || []).filter(r => r.status === 'pending');
+  const processedReservations = (reservations || []).filter(r => r.status !== 'pending');
+
+  const getBookStock = (bookId) => {
+    const book = books.find(b => b.id === bookId);
+    return book ? book.copiesAvailable : 0;
   };
 
-  const handleReject = (resId) => {
-    if (window.confirm("Are you sure you want to reject this student reservation request?")) {
-      updateReservationStatus(resId, 'rejected');
-    }
+  const handleApprove = (reservationId) => {
+    approveReservation(reservationId);
+    alert("Reservation approved successfully!");
   };
 
-  const pendingRes = reservations.filter(r => r.status === 'pending');
-  const processedRes = reservations.filter(r => r.status !== 'pending');
+  const handleReject = (reservationId) => {
+    if (window.confirm("Reject this book reservation request?")) {
+      rejectReservation(reservationId);
+    }
+  };
 
   return (
     <div className="animate-fade-in">
       <div style={{ marginBottom: '2rem' }}>
-        <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>Reservations Queue</h1>
-        <p style={{ color: 'var(--text-secondary)' }}>Review students' book reservation requests and approve holdings.</p>
+        <h1 className="gradient-text-circulation" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
+          Hold & Reservation Queue
+        </h1>
+        <p style={{ color: 'var(--text-secondary)' }}>Review pending student hold requests, verify stock levels, and dispatch pickup approvals.</p>
       </div>
 
       {/* Pending Reservations Queue */}
       <div className="glass-card" style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Bookmark size={20} className="gradient-text" /> Pending Requests ({pendingRes.length})
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>
+          <Clock size={20} className="gradient-text-circulation" /> Pending Hold Requests ({pendingReservations.length})
         </h2>
 
-        {pendingRes.length === 0 ? (
-          <div className="empty-state" style={{ padding: '3rem 1.5rem' }}>
-            <AlertCircle size={40} className="empty-state-icon" />
-            <h3 className="empty-state-title">Queue is empty</h3>
-            <p className="empty-state-desc">There are no pending student book reservations to review.</p>
+        {pendingReservations.length === 0 ? (
+          <div className="empty-state">
+            <CheckCircle2 size={40} className="empty-state-icon" style={{ color: 'var(--accent-green)' }} />
+            <h3 className="empty-state-title">Hold Queue is Clear</h3>
+            <p className="empty-state-desc">No student reservation requests are pending approval.</p>
           </div>
         ) : (
           <div className="table-container">
@@ -55,36 +53,42 @@ export const Reservations = () => {
                   <th>Student Name</th>
                   <th>Requested Book</th>
                   <th>Request Date</th>
-                  <th>Stock Status</th>
+                  <th>Current Stock</th>
                   <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {pendingRes.map(res => {
-                  const book = books.find(b => b.id === res.bookId);
-                  const isAvailable = book && book.copiesAvailable > 0;
+                {pendingReservations.map(res => {
+                  const stock = getBookStock(res.bookId);
+                  const isAvailable = stock > 0;
+
                   return (
                     <tr key={res.id}>
-                      <td style={{ fontWeight: 600 }}>{res.studentName}</td>
-                      <td style={{ fontWeight: 500 }}>{res.bookTitle}</td>
+                      <td>
+                        <div style={{ fontWeight: 700 }}>{res.studentName}</div>
+                      </td>
+                      <td style={{ fontWeight: 600 }}>{res.bookTitle}</td>
                       <td>{res.requestDate}</td>
                       <td>
-                        <span className={`badge ${isAvailable ? 'green' : 'red'}`}>
-                          {isAvailable ? `${book.copiesAvailable} In Stock` : 'Out of Stock'}
+                        <span className={`badge ${isAvailable ? 'green' : 'red'}`} style={{ fontSize: '0.725rem' }}>
+                          {isAvailable ? `${stock} Available` : 'Out of Stock'}
                         </span>
                       </td>
                       <td>
-                        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                          <button 
-                            className="btn-premium success" 
-                            style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', borderRadius: '6px' }}
-                            onClick={() => handleApprove(res)}
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                          <button
+                            className="btn-premium success"
+                            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderRadius: '8px' }}
+                            title="Approve Hold"
+                            onClick={() => handleApprove(res.id)}
+                            disabled={!isAvailable}
                           >
                             <Check size={14} /> Approve
                           </button>
-                          <button 
-                            className="btn-premium danger" 
-                            style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', borderRadius: '6px' }}
+                          <button
+                            className="btn-premium danger"
+                            style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderRadius: '8px' }}
+                            title="Reject Hold"
                             onClick={() => handleReject(res.id)}
                           >
                             <X size={14} /> Reject
@@ -100,13 +104,15 @@ export const Reservations = () => {
         )}
       </div>
 
-      {/* Processed History */}
+      {/* Processed Archive */}
       <div className="glass-card">
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.25rem' }}>Processed Requests Log</h2>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', fontFamily: 'Outfit, sans-serif' }}>
+          Historical Request Logs ({processedReservations.length})
+        </h2>
 
-        {processedRes.length === 0 ? (
-          <div className="empty-state" style={{ padding: '2rem' }}>
-            <p className="empty-state-desc">No reservation requests have been processed yet.</p>
+        {processedReservations.length === 0 ? (
+          <div className="empty-state">
+            <p className="empty-state-desc">No historical reservations processed yet.</p>
           </div>
         ) : (
           <div className="table-container">
@@ -114,16 +120,16 @@ export const Reservations = () => {
               <thead>
                 <tr>
                   <th>Student Name</th>
-                  <th>Requested Book</th>
+                  <th>Book Title</th>
                   <th>Request Date</th>
-                  <th>Status</th>
+                  <th>Decision Status</th>
                 </tr>
               </thead>
               <tbody>
-                {processedRes.map(res => (
+                {processedReservations.map(res => (
                   <tr key={res.id}>
-                    <td>{res.studentName}</td>
-                    <td style={{ fontWeight: 500 }}>{res.bookTitle}</td>
+                    <td style={{ fontWeight: 600 }}>{res.studentName}</td>
+                    <td style={{ fontWeight: 600 }}>{res.bookTitle}</td>
                     <td>{res.requestDate}</td>
                     <td>
                       <span className={`badge ${res.status === 'approved' ? 'green' : 'red'}`}>

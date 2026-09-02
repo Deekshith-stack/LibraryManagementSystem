@@ -3,16 +3,14 @@ import { LibraryContext } from '../../context/LibraryContext';
 import { 
   Search, 
   Bell, 
-  Shield, 
-  User, 
+  GraduationCap, 
+  BookMarked, 
+  ShieldCheck, 
   Users, 
   Menu, 
   Sparkles, 
-  Check, 
-  Trash2, 
-  ExternalLink,
   ChevronRight,
-  SlidersHorizontal
+  UserCheck
 } from 'lucide-react';
 import NotificationCenterModal from './NotificationCenterModal';
 
@@ -38,8 +36,7 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
   const unreadCount = roleNotifications.filter(n => !n.read).length;
 
   // Switch role defaults
-  const handleRoleChange = (e) => {
-    const selectedRole = e.target.value;
+  const handleRoleSelect = (selectedRole) => {
     const defaultUserOfRole = users.find(u => u.role === selectedRole);
     if (defaultUserOfRole) {
       changeCurrentUser(defaultUserOfRole.id);
@@ -66,7 +63,7 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
     <>
       <nav className="navbar">
         <div className="navbar-left">
-          {/* Sidebar Hide/Unhide Toggle Button */}
+          {/* Sidebar Toggle Button */}
           <button 
             className="navbar-toggle-btn"
             onClick={onToggleSidebar}
@@ -76,50 +73,64 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
             <Menu size={20} />
           </button>
 
-          {/* Search bar */}
+          {/* Search bar with Ctrl+K */}
           <div className="search-container">
             <Search size={18} />
             <input
               type="text"
               className="glass-input"
-              placeholder="Search catalog, books, ISBN, or loans..."
+              placeholder="Search Lumina Catalog..."
               value={searchVal || ''}
               onChange={(e) => setSearchVal && setSearchVal(e.target.value)}
             />
+            <span className="search-kbd">⌘K</span>
           </div>
         </div>
 
         <div className="navbar-right">
-          {/* Role & User Switcher */}
-          <div className="role-switcher-container">
-            <Shield size={14} style={{ color: 'var(--accent-cyan)' }} />
-            <span className="role-switcher-label">Role:</span>
-            <select 
-              className="role-select" 
-              value={currentUser?.role || 'student'} 
-              onChange={handleRoleChange}
+          {/* Interactive Role Switcher Pills */}
+          <div className="role-pill-group" title="Switch Portal Environment">
+            <button
+              className={`role-pill-btn ${currentUser?.role === 'student' ? 'active student' : ''}`}
+              onClick={() => handleRoleSelect('student')}
             >
-              <option value="student">Student</option>
-              <option value="librarian">Librarian</option>
-              <option value="admin">System Admin</option>
-            </select>
+              <GraduationCap size={15} />
+              <span>Scholar</span>
+            </button>
+            <button
+              className={`role-pill-btn ${currentUser?.role === 'librarian' ? 'active librarian' : ''}`}
+              onClick={() => handleRoleSelect('librarian')}
+            >
+              <BookMarked size={15} />
+              <span>Circulation</span>
+            </button>
+            <button
+              className={`role-pill-btn ${currentUser?.role === 'admin' ? 'active admin' : ''}`}
+              onClick={() => handleRoleSelect('admin')}
+            >
+              <ShieldCheck size={15} />
+              <span>Apex Admin</span>
+            </button>
           </div>
 
-          <div className="role-switcher-container">
-            <Users size={14} style={{ color: 'var(--accent-indigo)' }} />
-            <span className="role-switcher-label">User:</span>
-            <select 
-              className="role-select" 
-              value={currentUser?.id} 
-              onChange={handleUserChange}
-            >
-              {usersOfCurrentRole.map(u => (
-                <option key={u.id} value={u.id}>
-                  {u.name} {u.status === 'suspended' ? '(Suspended)' : ''}
-                </option>
-              ))}
-            </select>
-          </div>
+          {/* User selector if multiple exist in role */}
+          {usersOfCurrentRole.length > 1 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(15, 23, 42, 0.65)', border: '1px solid var(--border-color)', padding: '0.3rem 0.65rem', borderRadius: '12px' }}>
+              <Users size={14} style={{ color: 'var(--accent-indigo)' }} />
+              <select 
+                className="role-select" 
+                value={currentUser?.id} 
+                onChange={handleUserChange}
+                style={{ fontSize: '0.8rem' }}
+              >
+                {usersOfCurrentRole.map(u => (
+                  <option key={u.id} value={u.id}>
+                    {u.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Session Log Box */}
           <div className="session-box">
@@ -150,11 +161,11 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
               <div className="notif-dropdown">
                 <div className="notif-dropdown-header">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }}>
-                      Notifications
+                    <span style={{ fontWeight: 800, fontSize: '0.925rem', color: 'var(--text-primary)', fontFamily: 'Outfit, sans-serif' }}>
+                      Notification Center
                     </span>
                     {unreadCount > 0 && (
-                      <span className="badge red" style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem' }}>
+                      <span className="badge red" style={{ fontSize: '0.65rem', padding: '0.1rem 0.45rem' }}>
                         {unreadCount} new
                       </span>
                     )}
@@ -163,7 +174,7 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                   <div style={{ display: 'flex', gap: '0.4rem' }}>
                     {unreadCount > 0 && (
                       <button 
-                        style={{ border: 'none', background: 'transparent', color: 'var(--accent-cyan)', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
+                        style={{ border: 'none', background: 'transparent', color: 'var(--accent-cyan)', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 700 }}
                         onClick={() => markAllNotificationsRead(currentUser?.role)}
                       >
                         Read All
@@ -184,7 +195,7 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                 </div>
 
                 {/* Dropdown Items list */}
-                <div style={{ maxHeight: '250px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                <div style={{ maxHeight: '250px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
                   {roleNotifications.length === 0 ? (
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontStyle: 'italic', textAlign: 'center', padding: '1.5rem 0' }}>
                       No notifications for this role.
@@ -195,26 +206,26 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                         key={notif.id} 
                         className={`notif-item ${notif.read ? '' : 'unread'}`}
                         style={{
-                          padding: '0.6rem 0.75rem',
-                          borderRadius: '10px',
+                          padding: '0.65rem 0.85rem',
+                          borderRadius: '12px',
                           cursor: 'pointer',
-                          fontSize: '0.8rem',
+                          fontSize: '0.825rem',
                           background: notif.read ? 'rgba(255,255,255,0.015)' : 'rgba(99, 102, 241, 0.1)',
                           border: '1px solid',
-                          borderColor: notif.read ? 'rgba(255,255,255,0.03)' : 'rgba(99, 102, 241, 0.3)',
+                          borderColor: notif.read ? 'rgba(255,255,255,0.04)' : 'rgba(99, 102, 241, 0.3)',
                           transition: 'all 0.2s ease'
                         }}
                         onClick={() => handleQuickNotifClick(notif)}
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
-                          <span style={{ fontSize: '0.65rem', color: 'var(--accent-cyan)', fontWeight: 700, textTransform: 'uppercase' }}>
+                          <span style={{ fontSize: '0.65rem', color: 'var(--accent-cyan)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                             {notif.type ? notif.type.replace('_', ' ') : 'ALERT'}
                           </span>
-                          <span className="notif-item-time" style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                          <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
                             {notif.timestamp}
                           </span>
                         </div>
-                        <span className="notif-item-text" style={{ display: 'block', color: 'var(--text-primary)', fontWeight: notif.read ? 400 : 600, lineHeight: 1.3 }}>
+                        <span style={{ display: 'block', color: 'var(--text-primary)', fontWeight: notif.read ? 400 : 600, lineHeight: 1.35 }}>
                           {notif.text}
                         </span>
                       </div>
@@ -226,13 +237,13 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                 <div style={{ marginTop: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border-color)', textAlign: 'center' }}>
                   <button 
                     className="btn-premium secondary"
-                    style={{ width: '100%', padding: '0.4rem', fontSize: '0.78rem', borderRadius: '8px' }}
+                    style={{ width: '100%', padding: '0.45rem', fontSize: '0.78rem', borderRadius: '10px', gap: '0.3rem' }}
                     onClick={() => {
                       setIsNotifDropdownOpen(false);
                       setIsNotifModalOpen(true);
                     }}
                   >
-                    Open Notification Center <ChevronRight size={12} style={{ display: 'inline', marginLeft: '2px' }} />
+                    Open Full Notification Center <ChevronRight size={13} />
                   </button>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
-import { BookOpen, Calendar, AlertTriangle, CheckCircle2, History, Award, Sparkles } from 'lucide-react';
+import { BookOpen, Calendar, AlertTriangle, CheckCircle2, History, Award, Sparkles, Flame, Clock, ArrowRight } from 'lucide-react';
 import SmartRecommendations from './SmartRecommendations';
 
 export const StudentDashboard = ({ onNavigateTab }) => {
@@ -48,17 +48,46 @@ export const StudentDashboard = ({ onNavigateTab }) => {
 
   return (
     <div className="animate-fade-in">
-      {/* Header */}
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 className="gradient-text" style={{ fontSize: '2.25rem', marginBottom: '0.25rem' }}>
-          Welcome back, {currentUser?.name}
-        </h1>
-        <p style={{ color: 'var(--text-secondary)' }}>
-          Enrollment ID: <code style={{ color: 'var(--accent-cyan)' }}>{currentUser?.enrollmentId}</code> | Account Status: 
-          <span className={`badge ${currentUser?.status === 'active' ? 'green' : 'red'}`} style={{ marginLeft: '0.5rem' }}>
-            {currentUser?.status}
-          </span>
-        </p>
+      {/* Lumina Scholar Identity Banner */}
+      <div className="portal-banner scholar">
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+            <span className="badge cyan" style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem' }}>
+              LUMINA SCHOLAR HUB
+            </span>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+              • Enrollment: <code style={{ color: 'var(--accent-cyan)' }}>{currentUser?.enrollmentId}</code>
+            </span>
+          </div>
+          <h1 className="gradient-text-scholar" style={{ fontSize: '2.25rem', marginBottom: '0.35rem', lineHeight: 1.15 }}>
+            Welcome back, {currentUser?.name}
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem', maxWidth: '600px' }}>
+            Explore AI recommendations, track your active reading loans, and manage holds seamlessly.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {/* Reading Streak pill */}
+          <div style={{ 
+            background: 'rgba(15, 23, 42, 0.6)', 
+            border: '1px solid rgba(255, 255, 255, 0.1)', 
+            borderRadius: '16px', 
+            padding: '0.85rem 1.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            backdropFilter: 'blur(8px)'
+          }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Flame size={20} style={{ color: 'var(--accent-orange)' }} />
+            </div>
+            <div>
+              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>5 Day Streak</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Daily Scholar Goal</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Stats row */}
@@ -78,10 +107,10 @@ export const StudentDashboard = ({ onNavigateTab }) => {
             <Award size={24} />
           </div>
           <div className="stat-details">
-            <span className="stat-value" style={{ fontSize: '1.25rem', fontWeight: 800, padding: '0.25rem 0' }}>
+            <span className="stat-value" style={{ fontSize: '1.25rem', fontWeight: 800, padding: '0.2rem 0' }}>
               {favoriteGenre.length > 18 ? `${favoriteGenre.substring(0, 15)}...` : favoriteGenre}
             </span>
-            <span className="stat-title">Top Category</span>
+            <span className="stat-title">Favorite Category</span>
           </div>
         </div>
 
@@ -128,8 +157,8 @@ export const StudentDashboard = ({ onNavigateTab }) => {
       {/* Tab content */}
       {dashboardTab === 'active' ? (
         <div className="glass-card" style={{ marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <BookOpen size={20} className="gradient-text" /> Current Borrowings
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>
+            <BookOpen size={20} className="gradient-text-scholar" /> Current Borrowings
           </h2>
 
           {activeTxs.length === 0 ? (
@@ -162,16 +191,16 @@ export const StudentDashboard = ({ onNavigateTab }) => {
                         <td>{tx.dueDate}</td>
                         <td>
                           {isOverdue ? (
-                            <span style={{ color: 'var(--accent-red)', fontWeight: 600 }}>
+                            <span style={{ color: 'var(--accent-red)', fontWeight: 700 }}>
                               {Math.abs(daysLeft)} days overdue
                             </span>
                           ) : (
-                            <span style={{ color: 'var(--accent-green)', fontWeight: 600 }}>
+                            <span style={{ color: 'var(--accent-green)', fontWeight: 700 }}>
                               {daysLeft} days left
                             </span>
                           )}
                         </td>
-                        <td style={{ color: tx.fineAmount > 0 ? 'var(--accent-red)' : 'var(--text-primary)', fontWeight: tx.fineAmount > 0 ? 600 : 400 }}>
+                        <td style={{ color: tx.fineAmount > 0 ? 'var(--accent-red)' : 'var(--text-primary)', fontWeight: tx.fineAmount > 0 ? 700 : 400 }}>
                           ₹{tx.fineAmount.toFixed(2)}
                         </td>
                         <td>
@@ -190,8 +219,8 @@ export const StudentDashboard = ({ onNavigateTab }) => {
       ) : (
         /* Reading history tab */
         <div className="glass-card" style={{ marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <History size={20} className="gradient-text" /> Returned Books Records
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>
+            <History size={20} className="gradient-text-scholar" /> Returned Books Records
           </h2>
 
           {historyTxs.length === 0 ? (
@@ -239,7 +268,7 @@ export const StudentDashboard = ({ onNavigateTab }) => {
 
       {/* Reservation Statuses */}
       <div className="glass-card">
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem', fontFamily: 'Outfit, sans-serif' }}>
           <Calendar size={18} style={{ color: 'var(--accent-indigo)' }} /> My Book Reservations
         </h2>
         {studentReservations.length === 0 ? (
