@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
-import { Bookmark, Check, X, Clock, CheckCircle2, User, BookOpen } from 'lucide-react';
+import { Check, X, Clock, CheckCircle2 } from 'lucide-react';
 
 export const Reservations = () => {
-  const { reservations, books, users, approveReservation, rejectReservation } = useContext(LibraryContext);
+  const { reservations, books, approveReservation, rejectReservation } = useContext(LibraryContext);
 
   const pendingReservations = (reservations || []).filter(r => r.status === 'pending');
   const processedReservations = (reservations || []).filter(r => r.status !== 'pending');
@@ -15,7 +15,7 @@ export const Reservations = () => {
 
   const handleApprove = (reservationId) => {
     approveReservation(reservationId);
-    alert("Reservation approved successfully!");
+    alert("Hold request approved successfully!");
   };
 
   const handleReject = (reservationId) => {
@@ -27,16 +27,16 @@ export const Reservations = () => {
   return (
     <div className="animate-fade-in">
       <div style={{ marginBottom: '2rem' }}>
-        <h1 className="gradient-text-circulation" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
+        <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
           Hold & Reservation Queue
         </h1>
-        <p style={{ color: 'var(--text-secondary)' }}>Review pending student hold requests, verify stock levels, and dispatch pickup approvals.</p>
+        <p style={{ color: 'var(--text-secondary)' }}>Review pending student hold requests, approve book pickups, and manage history.</p>
       </div>
 
       {/* Pending Reservations Queue */}
       <div className="glass-card" style={{ marginBottom: '2rem' }}>
         <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>
-          <Clock size={20} className="gradient-text-circulation" /> Pending Hold Requests ({pendingReservations.length})
+          <Clock size={20} style={{ color: 'var(--accent-green)' }} /> Pending Hold Requests ({pendingReservations.length})
         </h2>
 
         {pendingReservations.length === 0 ? (
@@ -81,7 +81,6 @@ export const Reservations = () => {
                             style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', borderRadius: '8px' }}
                             title="Approve Hold"
                             onClick={() => handleApprove(res.id)}
-                            disabled={!isAvailable}
                           >
                             <Check size={14} /> Approve
                           </button>

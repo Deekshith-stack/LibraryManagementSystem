@@ -560,31 +560,22 @@ export const LibraryProvider = ({ children }) => {
 
     if (status === 'approved') {
       const book = books.find(b => b.id === res.bookId);
-      const student = users.find(u => u.id === res.studentId);
-
-      if (!student || student.status !== 'active') {
-        throw new Error("Student account is not active or is suspended.");
+      if (book && book.copiesAvailable > 0) {
+        setBooks(prev => prev.map(b => b.id === res.bookId ? { ...b, copiesAvailable: Math.max(0, b.copiesAvailable - 1) } : b));
       }
-
-      if (!book || book.copiesAvailable <= 0) {
-        throw new Error("Book is currently out of stock.");
-      }
-
-      const activeBorrows = transactions.filter(t => t.studentId === res.studentId && !t.returnDate).length;
-      if (activeBorrows >= settings.maxBooksAllowed) {
-        throw new Error(`Student has reached lending limit of ${settings.maxBooksAllowed} books.`);
-      }
-
-      const due = new Date();
-      due.setDate(due.getDate() + settings.borrowPeriodDays);
-      const dueDateString = due.toISOString().split('T')[0];
-
-      issueBook(res.studentId, res.bookId, dueDateString);
-      addNotification(`📚 Your reserved book "${res.bookTitle}" is now available and checked out!`, 'student', 'reservation', 'student-dashboard');
+      addNotification(`📚 Your reserved book "${res.bookTitle}" is now available and approved!`, 'student', 'reservation', 'student-dashboard');
     }
 
     setReservations(prev => prev.map(r => r.id === reservationId ? { ...r, status } : r));
     logEvent(`Reservation hold for "${res.bookTitle}" by "${res.studentName}" marked as ${status.toUpperCase()}.`, "reservation");
+  };
+
+  const approveReservation = (reservationId) => {
+    updateReservationStatus(reservationId, 'approved');
+  };
+
+  const rejectReservation = (reservationId) => {
+    updateReservationStatus(reservationId, 'rejected');
   };
 
   // ⭐ Priority 4: Smart Book Recommendations Engine
@@ -649,20 +640,20 @@ export const LibraryProvider = ({ children }) => {
         score -= 15;
       }
 
-      // Wishlist signal
+      // If in wishlist, high priority
       if (book.wishlist && book.wishlist.includes(targetStudentId)) {
         score += 15;
-        reasons.unshift("In your Bookmarks");
+        reasons.push('In your Bookmarks');
       }
 
-      const matchPercentage = Math.min(99, Math.max(75, Math.round(score)));
-      const primaryReason = reasons.length > 0 ? reasons[0] : `Popular in ${book.category}`;
+      const matchPercentage = Math.min(99, Math.max(75, score));
+      const primaryReason = reasons.length > 0 ? reasons[0] : `Popular in ${favoriteCategory}`;
 
       return {
         ...book,
+        matchScore: score,
         matchPercentage,
-        recommendationReason: primaryReason,
-        isWishlisted: book.wishlist && book.wishlist.includes(targetStudentId)
+        recommendationReason: primaryReason
       };
     });
 
@@ -699,6 +690,8 @@ export const LibraryProvider = ({ children }) => {
       toggleWishlist,
       requestReservation,
       updateReservationStatus,
+      approveReservation,
+      rejectReservation,
       clearSystemLogs,
       addNotification,
       markNotificationRead,

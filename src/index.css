@@ -369,7 +369,7 @@ body {
 
 /* Typography & Gradients */
 .gradient-text {
-  background: var(--gradient-lumina);
+  background: linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #a855f7 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -910,7 +910,7 @@ body {
 .sidebar-logo {
   width: 38px;
   height: 38px;
-  background: var(--gradient-lumina);
+  background: linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #a855f7 100%);
   border-radius: 12px;
   display: flex;
   align-items: center;

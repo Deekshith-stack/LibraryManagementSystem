@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
-import { Search, Filter, BookOpen, Clock, Check, AlertCircle, Bookmark, Star, MessageSquare, Send, Sparkles, Layers } from 'lucide-react';
+import { Filter, BookOpen, Clock, AlertCircle, Bookmark, Star, MessageSquare, Send, Sparkles } from 'lucide-react';
 import { Modal } from '../Shared/Modal';
 
 export const StudentCatalog = ({ searchVal }) => {
@@ -100,10 +100,10 @@ export const StudentCatalog = ({ searchVal }) => {
     <div className="animate-fade-in">
       <div className="flex-between" style={{ marginBottom: '1.75rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 className="gradient-text-scholar" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
-            Lumina Library Catalog
+          <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
+            Book Catalog
           </h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Explore curated knowledge volumes, reader ratings, and bookmark favorite editions.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Explore books, view availability, and manage your wishlist.</p>
         </div>
 
         {/* Category Filter */}
@@ -129,7 +129,7 @@ export const StudentCatalog = ({ searchVal }) => {
           className={`tab-btn ${catalogTab === 'all' ? 'active' : ''}`}
           onClick={() => setCatalogTab('all')}
         >
-          All Catalog ({books.length})
+          All Books ({books.length})
         </button>
         <button 
           className={`tab-btn ${catalogTab === 'recommended' ? 'active' : ''}`}
@@ -143,7 +143,7 @@ export const StudentCatalog = ({ searchVal }) => {
           onClick={() => setCatalogTab('wishlist')}
         >
           <Bookmark size={14} style={{ display: 'inline', marginRight: '4px' }} />
-          My Wishlist Bookmarks
+          My Wishlist
         </button>
       </div>
 
@@ -153,7 +153,7 @@ export const StudentCatalog = ({ searchVal }) => {
           <h3 className="empty-state-title">No matching books found</h3>
           <p className="empty-state-desc">
             {catalogTab === 'wishlist' 
-              ? "Your bookmark wishlist is currently empty. Bookmark books to review them later!"
+              ? "Your wishlist is currently empty. Bookmark books to save them for later!"
               : "We couldn't find any books matching your search query or filters."
             }
           </p>
@@ -228,9 +228,9 @@ export const StudentCatalog = ({ searchVal }) => {
                       <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{book.location}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Stock Status:</span>
+                      <span>Stock:</span>
                       <span className={`badge ${isOut ? 'red' : 'green'}`} style={{ padding: '0.1rem 0.5rem', fontSize: '0.7rem' }}>
-                        {isOut ? 'Out of Stock' : `${book.copiesAvailable} Left`}
+                        {isOut ? 'Out of Stock' : `${book.copiesAvailable} Available`}
                       </span>
                     </div>
                   </div>
@@ -262,7 +262,7 @@ export const StudentCatalog = ({ searchVal }) => {
                       >
                         {isOut ? (
                           <>
-                            <AlertCircle size={16} /> Request Copy
+                            <AlertCircle size={16} /> Request Hold
                           </>
                         ) : (
                           <>
@@ -284,7 +284,7 @@ export const StudentCatalog = ({ searchVal }) => {
         <Modal
           isOpen={isDetailModalOpen}
           onClose={() => setIsDetailModalOpen(false)}
-          title="Volume Specifications & Reviews"
+          title="Book Details & Reviews"
         >
           <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ display: 'flex', gap: '1.25rem' }}>
@@ -361,7 +361,7 @@ export const StudentCatalog = ({ searchVal }) => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '200px', overflowY: 'auto', paddingRight: '0.25rem' }}>
                 {!selectedBookForDetail.reviews || selectedBookForDetail.reviews.length === 0 ? (
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontStyle: 'italic', textAlign: 'center', padding: '1rem 0' }}>
-                    No reviews submitted for this title yet. Be the first to review!
+                    No reviews yet. Be the first to review!
                   </p>
                 ) : (
                   selectedBookForDetail.reviews.map(rev => (

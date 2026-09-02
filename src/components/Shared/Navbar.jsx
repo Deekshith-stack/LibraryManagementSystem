@@ -7,12 +7,9 @@ import {
   BookMarked, 
   ShieldCheck, 
   Menu, 
-  Sparkles, 
   ChevronRight,
   UserCheck,
-  Check,
-  Clock,
-  Layers
+  Check
 } from 'lucide-react';
 import NotificationCenterModal from './NotificationCenterModal';
 
@@ -32,7 +29,6 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
   const [isPersonaOpen, setIsPersonaOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
 
-  // Update clock every minute
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -43,11 +39,9 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
     return () => clearInterval(timer);
   }, []);
 
-  // Filter notifications for active role
   const roleNotifications = notifications ? notifications.filter(n => n.role === currentUser?.role) : [];
   const unreadCount = roleNotifications.filter(n => !n.read).length;
 
-  // Switch persona handler
   const handlePersonaSelect = (roleName) => {
     const targetUser = users.find(u => u.role === roleName);
     if (targetUser) {
@@ -69,37 +63,41 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
 
   const getRoleInfo = (role) => {
     switch (role) {
-      case 'student': return { label: 'Scholar', color: 'cyan', icon: GraduationCap };
-      case 'librarian': return { label: 'Circulation', color: 'green', icon: BookMarked };
-      case 'admin': return { label: 'Apex Admin', color: 'purple', icon: ShieldCheck };
-      default: return { label: 'Member', color: 'indigo', icon: UserCheck };
+      case 'student': return { label: 'Student', color: 'cyan', icon: GraduationCap };
+      case 'librarian': return { label: 'Librarian', color: 'green', icon: BookMarked };
+      case 'admin': return { label: 'Admin', color: 'purple', icon: ShieldCheck };
+      default: return { label: 'User', color: 'indigo', icon: UserCheck };
     }
   };
 
   const activeRoleInfo = getRoleInfo(currentUser?.role || 'student');
   const ActiveIcon = activeRoleInfo.icon;
 
+  // Find representative users for the switcher options
+  const studentUser = users.find(u => u.role === 'student');
+  const librarianUser = users.find(u => u.role === 'librarian');
+  const adminUser = users.find(u => u.role === 'admin');
+
   return (
     <>
       <nav className="navbar">
+        {/* Navbar Left */}
         <div className="navbar-left">
-          {/* Sidebar Toggle Button */}
           <button 
             className="navbar-toggle-btn"
             onClick={onToggleSidebar}
-            title={isSidebarCollapsed ? "Expand Sidebar (Unhide)" : "Collapse Sidebar (Hide)"}
+            title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             aria-label="Toggle Sidebar"
           >
             <Menu size={20} />
           </button>
 
-          {/* Global Quick Search bar with Ctrl+K */}
           <div className="search-container">
             <Search size={17} />
             <input
               type="text"
               className="glass-input"
-              placeholder="Quick search catalog..."
+              placeholder="Search catalog..."
               value={searchVal || ''}
               onChange={(e) => setSearchVal && setSearchVal(e.target.value)}
             />
@@ -107,8 +105,24 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
           </div>
         </div>
 
+        {/* Navbar Center - Centered Title */}
+        <div className="navbar-center" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{ 
+            fontFamily: 'Outfit, sans-serif', 
+            fontWeight: 900, 
+            fontSize: '1.45rem', 
+            letterSpacing: '1px',
+            background: 'linear-gradient(135deg, #06b6d4 0%, #6366f1 50%, #a855f7 100%)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+            color: 'transparent'
+          }}>
+            LMS
+          </span>
+        </div>
+
+        {/* Navbar Right */}
         <div className="navbar-right">
-          {/* Live System Status Pill */}
           <div className="live-status-pill">
             <span className="live-dot"></span>
             <span>Live • {currentTime}</span>
@@ -135,7 +149,7 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                 <div className="notif-dropdown-header">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                     <span style={{ fontWeight: 800, fontSize: '0.925rem', color: 'var(--text-primary)', fontFamily: 'Outfit, sans-serif' }}>
-                      Notification Center
+                      Notifications
                     </span>
                     {unreadCount > 0 && (
                       <span className="badge red" style={{ fontSize: '0.65rem', padding: '0.1rem 0.45rem' }}>
@@ -167,11 +181,10 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                   </div>
                 </div>
 
-                {/* Dropdown Items list */}
                 <div style={{ maxHeight: '250px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
                   {roleNotifications.length === 0 ? (
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontStyle: 'italic', textAlign: 'center', padding: '1.5rem 0' }}>
-                      No notifications for this role.
+                      No notifications.
                     </p>
                   ) : (
                     roleNotifications.map(notif => (
@@ -206,7 +219,6 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                   )}
                 </div>
 
-                {/* Footer link to open full notification center */}
                 <div style={{ marginTop: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border-color)', textAlign: 'center' }}>
                   <button 
                     className="btn-premium secondary"
@@ -216,14 +228,14 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                       setIsNotifModalOpen(true);
                     }}
                   >
-                    Open Full Notification Center <ChevronRight size={13} />
+                    Open Notification Center <ChevronRight size={13} />
                   </button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Luxury Profile Avatar & Persona Switcher */}
+          {/* Profile & Switcher Button */}
           <div style={{ position: 'relative' }}>
             <button 
               className="nav-profile-btn"
@@ -231,7 +243,7 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                 setIsPersonaOpen(!isPersonaOpen);
                 setIsNotifDropdownOpen(false);
               }}
-              title="Switch Persona / Account"
+              title="Switch Profile"
             >
               <div className={`nav-profile-avatar ${currentUser?.role}`}>
                 {userInitials}
@@ -253,14 +265,14 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                 <div className="persona-header">
                   <div>
                     <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'Outfit, sans-serif' }}>
-                      Switch Persona
+                      Switch User
                     </div>
                     <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                      Select account environment
+                      Select account
                     </div>
                   </div>
                   <span className={`badge ${activeRoleInfo.color}`} style={{ fontSize: '0.65rem' }}>
-                    {currentUser?.role}
+                    {activeRoleInfo.label}
                   </span>
                 </div>
 
@@ -274,8 +286,8 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                       <GraduationCap size={18} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>Scholar Account ("a")</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Borrow books, recommendations, fines</div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>{studentUser?.name || 'a'}</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Student</div>
                     </div>
                     {currentUser?.role === 'student' && <Check size={16} style={{ color: 'var(--accent-cyan)' }} />}
                   </button>
@@ -289,8 +301,8 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                       <BookMarked size={18} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>Head Librarian</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Inventory, check-outs & hold queue</div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>{librarianUser?.name || 'Librarian'}</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Librarian</div>
                     </div>
                     {currentUser?.role === 'librarian' && <Check size={16} style={{ color: 'var(--accent-green)' }} />}
                   </button>
@@ -304,8 +316,8 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
                       <ShieldCheck size={18} />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>Apex Administrator</div>
-                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Analytics, member directory & policies</div>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>{adminUser?.name || 'Admin'}</div>
+                      <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>Admin</div>
                     </div>
                     {currentUser?.role === 'admin' && <Check size={16} style={{ color: 'var(--accent-purple)' }} />}
                   </button>
@@ -316,7 +328,6 @@ export const Navbar = ({ searchVal, setSearchVal, isSidebarCollapsed, onToggleSi
         </div>
       </nav>
 
-      {/* Dedicated Notification Center Modal */}
       <NotificationCenterModal
         isOpen={isNotifModalOpen}
         onClose={() => setIsNotifModalOpen(false)}

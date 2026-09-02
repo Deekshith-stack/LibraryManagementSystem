@@ -240,7 +240,7 @@ export const UserManagement = ({ searchVal }) => {
             <input
               type="email"
               className="glass-input"
-              placeholder="e.g. user@lumina.edu"
+              placeholder="e.g. user@library.edu"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -260,9 +260,9 @@ export const UserManagement = ({ searchVal }) => {
                   setEnrollmentId(`${prefix}-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`);
                 }}
               >
-                <option value="student">Student (Scholar)</option>
-                <option value="librarian">Librarian (Circulation Desk)</option>
-                <option value="admin">Administrator (Apex Console)</option>
+                <option value="student">Student</option>
+                <option value="librarian">Librarian</option>
+                <option value="admin">Administrator</option>
               </select>
             </div>
 

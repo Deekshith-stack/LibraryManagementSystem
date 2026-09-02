@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
 import { Modal } from '../Shared/Modal';
-import { Plus, Edit2, Trash2, Search, Library, Tag, AlertCircle, BookMarked, Layers } from 'lucide-react';
+import { Plus, Edit2, Trash2, Library, Tag, AlertCircle } from 'lucide-react';
 
 export const BookCatalog = ({ searchVal }) => {
   const { books, addBook, updateBook, deleteBook } = useContext(LibraryContext);
@@ -120,7 +120,7 @@ export const BookCatalog = ({ searchVal }) => {
   };
 
   const handleDelete = (bookId) => {
-    if (window.confirm("Are you sure you want to delete this volume from circulation?")) {
+    if (window.confirm("Are you sure you want to delete this book from catalog?")) {
       deleteBook(bookId);
     }
   };
@@ -142,22 +142,14 @@ export const BookCatalog = ({ searchVal }) => {
 
   return (
     <div className="animate-fade-in">
-      {/* Lumina Circulation Desk Identity Banner */}
-      <div className="portal-banner circulation">
+      {/* Clean Inventory Header */}
+      <div className="flex-between" style={{ marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-            <span className="badge green" style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem' }}>
-              LUMINA CIRCULATION DESK
-            </span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-              • Total Cataloged: <code style={{ color: 'var(--accent-green)' }}>{(books || []).length} Titles</code>
-            </span>
-          </div>
-          <h1 className="gradient-text-circulation" style={{ fontSize: '2.25rem', marginBottom: '0.35rem', lineHeight: 1.15 }}>
-            Book Inventory & Cataloger
+          <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
+            Book Inventory
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem', maxWidth: '600px' }}>
-            Catalog new editions, monitor inventory availability across shelf stacks, and maintain bibliographic data.
+          <p style={{ color: 'var(--text-secondary)' }}>
+            Catalog new editions, monitor inventory availability across shelf stacks, and maintain book details.
           </p>
         </div>
 
@@ -172,8 +164,8 @@ export const BookCatalog = ({ searchVal }) => {
             <option value="low-stock">Out of Stock</option>
           </select>
           
-          <button className="btn-premium primary" style={{ background: 'var(--gradient-circulation)' }} onClick={handleOpenAdd}>
-            <Plus size={18} /> Catalog New Book
+          <button className="btn-premium primary" onClick={handleOpenAdd}>
+            <Plus size={18} /> Add New Book
           </button>
         </div>
       </div>
@@ -262,7 +254,7 @@ export const BookCatalog = ({ searchVal }) => {
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={modalMode === 'add' ? 'Catalog New Edition' : 'Update Bibliographic Data'}
+        title={modalMode === 'add' ? 'Catalog New Book' : 'Update Book Details'}
       >
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -402,8 +394,8 @@ export const BookCatalog = ({ searchVal }) => {
             <button type="button" className="btn-premium secondary" onClick={() => setIsModalOpen(false)}>
               Cancel
             </button>
-            <button type="submit" className="btn-premium primary" style={{ background: 'var(--gradient-circulation)' }}>
-              {modalMode === 'add' ? 'Catalog Edition' : 'Save Modifications'}
+            <button type="submit" className="btn-premium primary">
+              {modalMode === 'add' ? 'Add Book' : 'Save Changes'}
             </button>
           </div>
         </form>

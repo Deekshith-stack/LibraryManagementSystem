@@ -65,10 +65,10 @@ export const StudentFines = () => {
   return (
     <div className="animate-fade-in">
       <div style={{ marginBottom: '2rem' }}>
-        <h1 className="gradient-text-scholar" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
-          Circulation Fines & Receipts
+        <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
+          Fines & Payments
         </h1>
-        <p style={{ color: 'var(--text-secondary)' }}>Review outstanding overdue balances, manage simulated UPI / Card payments, and download receipts.</p>
+        <p style={{ color: 'var(--text-secondary)' }}>Review outstanding overdue balances, pay online via UPI / Card, and download payment receipts.</p>
       </div>
 
       {/* Tabs */}
@@ -228,7 +228,7 @@ export const StudentFines = () => {
       <Modal
         isOpen={isPayModalOpen}
         onClose={() => setIsPayModalOpen(false)}
-        title={selectedTx === 'all' ? 'Lumina Settlement Gateway' : 'Fine Payment Portal'}
+        title={selectedTx === 'all' ? 'Pay Outstanding Total' : 'Fine Payment Portal'}
       >
         {paymentSuccess ? (
           <div style={{ textAlign: 'center', padding: '2rem 1rem' }} className="animate-fade-in">

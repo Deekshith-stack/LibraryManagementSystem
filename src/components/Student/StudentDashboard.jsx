@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
-import { BookOpen, Calendar, AlertTriangle, CheckCircle2, History, Award, Sparkles, Flame, Clock, ArrowRight } from 'lucide-react';
+import { BookOpen, Calendar, AlertTriangle, CheckCircle2, History, Award, Flame } from 'lucide-react';
 import SmartRecommendations from './SmartRecommendations';
 
 export const StudentDashboard = ({ onNavigateTab }) => {
@@ -48,44 +48,42 @@ export const StudentDashboard = ({ onNavigateTab }) => {
 
   return (
     <div className="animate-fade-in">
-      {/* Lumina Scholar Identity Banner */}
-      <div className="portal-banner scholar">
+      {/* Student Header */}
+      <div className="flex-between" style={{ marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
             <span className="badge cyan" style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem' }}>
-              LUMINA SCHOLAR HUB
+              Student
             </span>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
               • Enrollment: <code style={{ color: 'var(--accent-cyan)' }}>{currentUser?.enrollmentId}</code>
             </span>
           </div>
-          <h1 className="gradient-text-scholar" style={{ fontSize: '2.25rem', marginBottom: '0.35rem', lineHeight: 1.15 }}>
+          <h1 className="gradient-text" style={{ fontSize: '2.1rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
             Welcome back, {currentUser?.name}
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem', maxWidth: '600px' }}>
-            Explore AI recommendations, track your active reading loans, and manage holds seamlessly.
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem' }}>
+            Track your active borrowed books, reservations, and smart recommendations.
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          {/* Reading Streak pill */}
-          <div style={{ 
-            background: 'rgba(15, 23, 42, 0.6)', 
-            border: '1px solid rgba(255, 255, 255, 0.1)', 
-            borderRadius: '16px', 
-            padding: '0.85rem 1.25rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            backdropFilter: 'blur(8px)'
-          }}>
-            <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Flame size={20} style={{ color: 'var(--accent-orange)' }} />
-            </div>
-            <div>
-              <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)' }}>5 Day Streak</div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Daily Scholar Goal</div>
-            </div>
+        {/* Reading Streak pill */}
+        <div style={{ 
+          background: 'rgba(15, 23, 42, 0.6)', 
+          border: '1px solid var(--border-color)', 
+          borderRadius: '16px', 
+          padding: '0.75rem 1.25rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          backdropFilter: 'blur(8px)'
+        }}>
+          <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Flame size={18} style={{ color: 'var(--accent-orange)' }} />
+          </div>
+          <div>
+            <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>5 Day Streak</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Daily Reading Goal</div>
           </div>
         </div>
       </div>
@@ -110,7 +108,7 @@ export const StudentDashboard = ({ onNavigateTab }) => {
             <span className="stat-value" style={{ fontSize: '1.25rem', fontWeight: 800, padding: '0.2rem 0' }}>
               {favoriteGenre.length > 18 ? `${favoriteGenre.substring(0, 15)}...` : favoriteGenre}
             </span>
-            <span className="stat-title">Favorite Category</span>
+            <span className="stat-title">Top Category</span>
           </div>
         </div>
 
@@ -130,7 +128,7 @@ export const StudentDashboard = ({ onNavigateTab }) => {
           </div>
           <div className="stat-details">
             <span className="stat-value">₹{totalFines.toFixed(2)}</span>
-            <span className="stat-title">Outstanding Fines</span>
+            <span className="stat-title">Pending Fines</span>
           </div>
         </div>
       </div>
@@ -158,7 +156,7 @@ export const StudentDashboard = ({ onNavigateTab }) => {
       {dashboardTab === 'active' ? (
         <div className="glass-card" style={{ marginBottom: '2rem' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>
-            <BookOpen size={20} className="gradient-text-scholar" /> Current Borrowings
+            <BookOpen size={20} style={{ color: 'var(--accent-cyan)' }} /> Current Borrowings
           </h2>
 
           {activeTxs.length === 0 ? (
@@ -217,10 +215,9 @@ export const StudentDashboard = ({ onNavigateTab }) => {
           )}
         </div>
       ) : (
-        /* Reading history tab */
         <div className="glass-card" style={{ marginBottom: '2rem' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>
-            <History size={20} className="gradient-text-scholar" /> Returned Books Records
+            <History size={20} style={{ color: 'var(--accent-cyan)' }} /> Returned Books Records
           </h2>
 
           {historyTxs.length === 0 ? (

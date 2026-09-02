@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
-import { Settings2, Save, RotateCcw, AlertTriangle, ShieldCheck, Download, Upload, CheckCircle2 } from 'lucide-react';
+import { Settings2, Save, RotateCcw, CheckCircle2 } from 'lucide-react';
 
 export const LibrarySettings = () => {
-  const { settings, updateSettings, exportDataAsCSV } = useContext(LibraryContext);
+  const { settings, updateSettings } = useContext(LibraryContext);
 
   const [fineRatePerDay, setFineRatePerDay] = useState(settings.fineRatePerDay || 5.0);
   const [borrowPeriodDays, setBorrowPeriodDays] = useState(settings.borrowPeriodDays || 14);
@@ -26,7 +26,7 @@ export const LibrarySettings = () => {
   };
 
   const handleResetDefaults = () => {
-    if (window.confirm("Reset all lending policies back to standard Lumina defaults?")) {
+    if (window.confirm("Reset all settings back to standard defaults?")) {
       setFineRatePerDay(5.0);
       setBorrowPeriodDays(14);
       setMaxBooksPerStudent(4);
@@ -41,17 +41,16 @@ export const LibrarySettings = () => {
   return (
     <div className="animate-fade-in">
       <div style={{ marginBottom: '2rem' }}>
-        <h1 className="gradient-text-apex" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
-          Circulation Policy & Engine Settings
+        <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
+          Library Settings
         </h1>
-        <p style={{ color: 'var(--text-secondary)' }}>Configure overdue fee evaluation rates, lending limits, and system backup archives.</p>
+        <p style={{ color: 'var(--text-secondary)' }}>Configure overdue fee rates, borrowing limits, and loan duration periods.</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1.5rem' }}>
-        {/* Core Rules Configuration */}
+      <div style={{ maxWidth: '640px' }}>
         <div className="glass-card">
           <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>
-            <Settings2 size={20} className="gradient-text-apex" /> Circulation Rules Engine
+            <Settings2 size={20} style={{ color: 'var(--accent-purple)' }} /> Circulation Rules
           </h2>
 
           <form onSubmit={handleSave}>
@@ -95,8 +94,8 @@ export const LibrarySettings = () => {
 
             <div className="form-group">
               <label className="form-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Max Concurrent Checkouts per Scholar</span>
-                <span style={{ color: 'var(--accent-green)', fontWeight: 800 }}>{maxBooksPerStudent} Volumes</span>
+                <span>Max Concurrent Checkouts per Student</span>
+                <span style={{ color: 'var(--accent-green)', fontWeight: 800 }}>{maxBooksPerStudent} Books</span>
               </label>
               <input
                 type="number"
@@ -108,7 +107,7 @@ export const LibrarySettings = () => {
                 required
               />
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.35rem' }}>
-                Threshold limit preventing excessive simultaneous checkouts.
+                Maximum number of active borrowed books allowed per student.
               </p>
             </div>
 
@@ -124,7 +123,7 @@ export const LibrarySettings = () => {
               <button
                 type="submit"
                 className="btn-premium primary"
-                style={{ flex: 2, background: 'var(--gradient-apex)' }}
+                style={{ flex: 2 }}
               >
                 {isSaved ? (
                   <>
@@ -132,63 +131,12 @@ export const LibrarySettings = () => {
                   </>
                 ) : (
                   <>
-                    <Save size={16} /> Save Policies
+                    <Save size={16} /> Save Settings
                   </>
                 )}
               </button>
             </div>
           </form>
-        </div>
-
-        {/* System Operations & Backups */}
-        <div className="glass-card">
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>
-            <ShieldCheck size={20} style={{ color: 'var(--accent-green)' }} /> Database Archives & Telemetry
-          </h2>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '0.25rem' }}>Lumina Inventory Export</div>
-              <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
-                Download real-time snapshot of the entire book catalog as formatted CSV.
-              </p>
-              <button 
-                className="btn-premium secondary" 
-                style={{ width: '100%', padding: '0.5rem', fontSize: '0.85rem' }}
-                onClick={() => exportDataAsCSV('books')}
-              >
-                <Download size={14} /> Export Books Catalog CSV
-              </button>
-            </div>
-
-            <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '0.25rem' }}>Circulation Transactions Export</div>
-              <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
-                Archive all active loans, return dates, and fine payments as CSV.
-              </p>
-              <button 
-                className="btn-premium secondary" 
-                style={{ width: '100%', padding: '0.5rem', fontSize: '0.85rem' }}
-                onClick={() => exportDataAsCSV('transactions')}
-              >
-                <Download size={14} /> Export Lending Logs CSV
-              </button>
-            </div>
-
-            <div style={{ background: 'rgba(255,255,255,0.02)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-              <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: '0.25rem' }}>Patron Directory Export</div>
-              <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
-                Export member profiles, credentials, and access status records.
-              </p>
-              <button 
-                className="btn-premium secondary" 
-                style={{ width: '100%', padding: '0.5rem', fontSize: '0.85rem' }}
-                onClick={() => exportDataAsCSV('users')}
-              >
-                <Download size={14} /> Export Patrons CSV
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

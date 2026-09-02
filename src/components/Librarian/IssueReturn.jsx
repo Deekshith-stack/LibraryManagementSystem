@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
-import { ArrowLeftRight, CheckCircle2, AlertTriangle, Calendar, Plus, User, Mail, RefreshCw, Clock } from 'lucide-react';
+import { ArrowLeftRight, CheckCircle2, AlertTriangle, Plus, Mail, RefreshCw } from 'lucide-react';
 import { Modal } from '../Shared/Modal';
 
 export const IssueReturn = () => {
@@ -90,15 +90,15 @@ export const IssueReturn = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="flex-between" style={{ marginBottom: '2rem' }}>
+      <div className="flex-between" style={{ marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h1 className="gradient-text-circulation" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
-            Circulation Operations Desk
+          <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
+            Issue & Return Desk
           </h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Check books in and out, set lending windows, and monitor overdue patron accounts.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Check books in and out, set due dates, and monitor active lending records.</p>
         </div>
 
-        <button className="btn-premium primary" style={{ background: 'var(--gradient-circulation)' }} onClick={handleOpenIssue}>
+        <button className="btn-premium primary" onClick={handleOpenIssue}>
           <Plus size={18} /> Check Out Book
         </button>
       </div>
@@ -123,7 +123,7 @@ export const IssueReturn = () => {
         <div className="glass-card">
           <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: 0, fontFamily: 'Outfit, sans-serif' }}>
-              <ArrowLeftRight size={20} className="gradient-text-circulation" /> Outstanding Circulation Loans
+              <ArrowLeftRight size={20} style={{ color: 'var(--accent-green)' }} /> Outstanding Loans
             </h2>
 
             <label className="flex-align" style={{ gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', cursor: 'pointer' }}>
@@ -133,7 +133,7 @@ export const IssueReturn = () => {
                 onChange={(e) => setOverdueOnly(e.target.checked)}
                 style={{ cursor: 'pointer' }}
               />
-              <span>Filter Overdue Accounts</span>
+              <span>Filter Overdue</span>
             </label>
           </div>
 
@@ -222,7 +222,7 @@ export const IssueReturn = () => {
 
           {historyTxs.length === 0 ? (
             <div className="empty-state">
-              <p className="empty-state-desc">No books have been returned yet during this operational session.</p>
+              <p className="empty-state-desc">No books have been returned yet.</p>
             </div>
           ) : (
             <div className="table-container">
@@ -274,7 +274,7 @@ export const IssueReturn = () => {
       <Modal
         isOpen={isIssueModalOpen}
         onClose={() => setIsIssueModalOpen(false)}
-        title="Check Out Circulation Item"
+        title="Check Out Book"
       >
         <form onSubmit={handleIssueSubmit}>
           {errorMsg && (
@@ -292,9 +292,9 @@ export const IssueReturn = () => {
           )}
 
           <div className="form-group">
-            <label className="form-label">Select Borrower Profile</label>
+            <label className="form-label">Select Student</label>
             {activeStudents.length === 0 ? (
-              <p style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>No active patrons found in directory.</p>
+              <p style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>No active students found in directory.</p>
             ) : (
               <select
                 className="glass-input glass-select"
@@ -302,7 +302,7 @@ export const IssueReturn = () => {
                 onChange={(e) => setStudentId(e.target.value)}
                 required
               >
-                <option value="" disabled>-- Select Patron --</option>
+                <option value="" disabled>-- Select Student --</option>
                 {activeStudents.map(stu => (
                   <option key={stu.id} value={stu.id}>{stu.name} ({stu.enrollmentId})</option>
                 ))}
@@ -311,9 +311,9 @@ export const IssueReturn = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Select Catalog Title</label>
+            <label className="form-label">Select Book</label>
             {availableBooks.length === 0 ? (
-              <p style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>No inventory copies currently available.</p>
+              <p style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>No copies currently available.</p>
             ) : (
               <select
                 className="glass-input glass-select"
@@ -321,7 +321,7 @@ export const IssueReturn = () => {
                 onChange={(e) => setBookId(e.target.value)}
                 required
               >
-                <option value="" disabled>-- Select Volume --</option>
+                <option value="" disabled>-- Select Book --</option>
                 {availableBooks.map(b => (
                   <option key={b.id} value={b.id}>{b.title} by {b.author} ({b.copiesAvailable} left)</option>
                 ))}
@@ -330,7 +330,7 @@ export const IssueReturn = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Return Due Date</label>
+            <label className="form-label">Due Date</label>
             <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.5rem' }}>
               <button
                 type="button"
@@ -370,7 +370,7 @@ export const IssueReturn = () => {
             <button type="button" className="btn-premium secondary" onClick={() => setIsIssueModalOpen(false)}>
               Cancel
             </button>
-            <button type="submit" className="btn-premium primary" style={{ background: 'var(--gradient-circulation)' }} disabled={activeStudents.length === 0 || availableBooks.length === 0}>
+            <button type="submit" className="btn-premium primary" disabled={activeStudents.length === 0 || availableBooks.length === 0}>
               Complete Checkout
             </button>
           </div>

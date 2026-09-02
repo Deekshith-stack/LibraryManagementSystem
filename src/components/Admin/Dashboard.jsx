@@ -4,14 +4,10 @@ import {
   BookOpen, 
   Users, 
   ArrowLeftRight, 
-  DollarSign, 
   Download, 
   Activity, 
   TrendingUp, 
-  Layers, 
-  ShieldCheck, 
-  Zap,
-  Clock
+  Layers
 } from 'lucide-react';
 
 export const Dashboard = () => {
@@ -46,22 +42,14 @@ export const Dashboard = () => {
 
   return (
     <div className="animate-fade-in">
-      {/* Lumina Apex Identity Banner */}
-      <div className="portal-banner apex">
+      {/* Clean Admin Dashboard Header */}
+      <div className="flex-between" style={{ marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-            <span className="badge purple" style={{ fontSize: '0.7rem', padding: '0.15rem 0.5rem' }}>
-              LUMINA APEX EXECUTIVE CONSOLE
-            </span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-              • System Telemetry: <code style={{ color: 'var(--accent-purple)' }}>Online / Operational</code>
-            </span>
-          </div>
-          <h1 className="gradient-text-apex" style={{ fontSize: '2.25rem', marginBottom: '0.35rem', lineHeight: 1.15 }}>
-            Apex Operations & Intelligence
+          <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem', fontFamily: 'Outfit, sans-serif' }}>
+            Admin Dashboard
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem', maxWidth: '600px' }}>
-            Executive oversight of catalog volume, patron demographics, active lending velocity, and audit streams.
+          <p style={{ color: 'var(--text-secondary)' }}>
+            System metrics, catalog volume, active lending velocity, and activity logs.
           </p>
         </div>
 
@@ -69,24 +57,24 @@ export const Dashboard = () => {
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           <button 
             className="btn-premium primary" 
-            style={{ background: 'var(--gradient-apex)', padding: '0.65rem 1rem', fontSize: '0.85rem' }}
+            style={{ padding: '0.6rem 1rem', fontSize: '0.85rem' }}
             onClick={() => exportDataAsCSV('books')}
           >
             <Download size={15} /> Books CSV
           </button>
           <button 
             className="btn-premium secondary" 
-            style={{ padding: '0.65rem 1rem', fontSize: '0.85rem' }}
+            style={{ padding: '0.6rem 1rem', fontSize: '0.85rem' }}
             onClick={() => exportDataAsCSV('transactions')}
           >
             <Download size={15} /> Loans CSV
           </button>
           <button 
             className="btn-premium secondary" 
-            style={{ padding: '0.65rem 1rem', fontSize: '0.85rem' }}
+            style={{ padding: '0.6rem 1rem', fontSize: '0.85rem' }}
             onClick={() => exportDataAsCSV('users')}
           >
-            <Download size={15} /> Patrons CSV
+            <Download size={15} /> Users CSV
           </button>
         </div>
       </div>
@@ -109,7 +97,7 @@ export const Dashboard = () => {
           </div>
           <div className="stat-details">
             <span className="stat-value">{totalUsers}</span>
-            <span className="stat-title">Registered Patrons</span>
+            <span className="stat-title">Registered Users</span>
           </div>
         </div>
 
@@ -139,7 +127,7 @@ export const Dashboard = () => {
         {/* Category breakdown */}
         <div className="glass-card">
           <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>
-            <Layers size={18} style={{ color: 'var(--accent-purple)' }} /> Inventory Domain Breakdown
+            <Layers size={18} style={{ color: 'var(--accent-purple)' }} /> Category Distribution
           </h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -159,7 +147,7 @@ export const Dashboard = () => {
                         style={{ 
                           width: `${percent}%`, 
                           height: '100%', 
-                          background: 'var(--gradient-apex)', 
+                          background: 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)', 
                           borderRadius: '4px',
                           boxShadow: '0 0 10px rgba(168, 85, 247, 0.4)'
                         }} 
@@ -175,7 +163,7 @@ export const Dashboard = () => {
         {/* Most Borrowed Leaderboard */}
         <div className="glass-card">
           <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>
-            <TrendingUp size={18} style={{ color: 'var(--accent-cyan)' }} /> Top Borrowed Leaderboard
+            <TrendingUp size={18} style={{ color: 'var(--accent-cyan)' }} /> Most Borrowed Books
           </h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -224,15 +212,15 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      {/* System Activity & Telemetry Audit Stream */}
+      {/* Activity Logs */}
       <div className="glass-card">
         <h2 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'Outfit, sans-serif' }}>
-          <Activity size={18} style={{ color: 'var(--accent-green)' }} /> Real-Time Audit Telemetry Stream
+          <Activity size={18} style={{ color: 'var(--accent-green)' }} /> Activity Logs
         </h2>
 
         {(!activityLogs || activityLogs.length === 0) ? (
           <div className="empty-state" style={{ padding: '2rem' }}>
-            <p className="empty-state-desc">No system audit activity recorded yet.</p>
+            <p className="empty-state-desc">No system activity recorded yet.</p>
           </div>
         ) : (
           <div className="table-container">
@@ -242,7 +230,7 @@ export const Dashboard = () => {
                   <th>Timestamp</th>
                   <th>Action Type</th>
                   <th>Description</th>
-                  <th>Operator</th>
+                  <th>Performed By</th>
                 </tr>
               </thead>
               <tbody>

@@ -1,15 +1,15 @@
 <div align="center">
 
-# ⚡ Aetheria Knowledge OS
+# 📚 LMS - Library Management System
 
-### Intelligent Digital Library & Circulation Engine
+### Modern, Responsive & Intelligent Library Platform
 
-<img src="https://readme-typing-svg.demolab.com?font=Plus+Jakarta+Sans&weight=700&size=26&duration=3500&pause=1000&color=06B6D4&center=true&vCenter=true&width=750&lines=Aetheria+Knowledge+OS+%E2%80%A2+Next-Gen+Library;AI+Personalized+Book+Recommendations;Real-Time+Notification+Center+%E2%80%A2+Alerts;Clean+SaaS+Navigation+%E2%80%A2+Persona+Switcher;Student+%7C+Librarian+%7C+Admin+Portals" alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Plus+Jakarta+Sans&weight=700&size=26&duration=3500&pause=1000&color=06B6D4&center=true&vCenter=true&width=750&lines=LMS+%E2%80%A2+Library+Management+System;Student+%7C+Librarian+%7C+Admin+Portals;AI+Personalized+Book+Recommendations;Real-Time+Notification+Center+%E2%80%A2+Alerts;Clean+Centered+Navigation+%E2%80%A2+User+Switcher" alt="Typing SVG" />
 
 <br/><br/>
 
 <a href="https://deekshith-stack.github.io/LibraryManagementSystem/">
-  <img src="https://img.shields.io/badge/🚀%20OPEN%20AETHERIA%20OS-Visit%20Platform-06B6D4?style=for-the-badge" alt="Live Demo"/>
+  <img src="https://img.shields.io/badge/🚀%20OPEN%20LMS-Visit%20Platform-06B6D4?style=for-the-badge" alt="Live Demo"/>
 </a>
 &nbsp;
 <a href="https://github.com/Deekshith-stack/LibraryManagementSystem">
@@ -20,13 +20,13 @@
 
 <img src="https://img.shields.io/badge/React-19.2.8-61DAFB?style=flat-square&logo=react&logoColor=white" />
 <img src="https://img.shields.io/badge/Vite-8.2.2-646CFF?style=flat-square&logo=vite&logoColor=white" />
-<img src="https://img.shields.io/badge/Design%20System-Aetheria%20Glass-06B6D4?style=flat-square" />
+<img src="https://img.shields.io/badge/Design%20System-Dark%20Glass-06B6D4?style=flat-square" />
 <img src="https://img.shields.io/badge/Deployment-GitHub%20Pages-222222?style=flat-square&logo=github&logoColor=white" />
 <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" />
 
 <br/><br/>
 
-> **Aetheria Knowledge OS** is a modern, high-performance digital library platform built with **React 19**, **Vite**, and custom **Dark Glassmorphism CSS**. Designed with clean SaaS navigation, an intuitive **Persona Switcher popover**, heuristic AI book recommendations, multi-category notification alerts, collapsible sidebar rails, and automated Indian Rupee (₹) fine calculation.
+> **LMS** is a feature-rich, high-performance digital library management system built with **React 19**, **Vite**, and modern **Glassmorphism CSS**. Designed with clean centered navigation, quick user switching, AI book recommendations, multi-category notification alerts, collapsible sidebar navigation, and automated Indian Rupee (₹) overdue fine calculation.
 
 </div>
 
@@ -39,17 +39,16 @@
 
 ---
 
-## 🎨 Three Distinct Portal Experiences
+## 👥 Three Tailored User Roles
 
 <div align="center">
 
-| 🎓 **Scholar Hub** *(Student)* | 📖 **Circulation Desk** *(Librarian)* | ⚙️ **Apex Console** *(Admin)* |
+| 🎓 **Student** | 📖 **Librarian** | ⚙️ **Admin** |
 | :---: | :---: | :---: |
-| *Celestial Cyan & Indigo Theme* | *Emerald & Teal Operational Desk* | *Violet & Rose Executive Suite* |
-| AI Recommendation Scoring | Shelf Stacks & Low-Stock Alerts | Real-Time Audit Telemetry Stream |
-| Daily Reading Streaks | 1-Click Lending Windows (+7, +14, +30d) | Category Distribution Progress Bars |
-| Active Loan Due-Date Chips | Hold Request Processing Queue | User Governance & RBAC Directory |
-| Digital Receipts & UPI / Card Pay | Fine Recovery & Overdue Alerts | One-Click CSV System Snapshots |
+| Browse & Search Catalog | Manage Book Inventory | View Analytics & Key Metrics |
+| AI Smart Book Recommendations | Issue & Return Desk (+7, +14, +30d) | Manage User Directory & Roles |
+| Track Active Loans & Due Dates | Approve/Reject Hold Requests | Configure Lending Policies |
+| Pay Fines & Download Receipts (₹) | Send Overdue Reminder Notices | Export Books, Loans & Users as CSV |
 
 </div>
 
@@ -57,47 +56,18 @@
 
 ## 🌟 Key Platform Features
 
-- **👤 Luxury Persona Switcher:** Clean top navigation bar with a profile avatar pill; clicking opens a luxury popover to switch between **Scholar ("a")**, **Head Librarian**, and **Apex Administrator**.
-- **⭐ Smart Book Recommendations:** Intelligent scoring algorithm personalizing book suggestions based on borrowing history, genre affinity, wishlist bookmarks, and reader ratings, complete with match percentage badges (`98% Match`) and affinity reason tags (*"Because you read Clean Code"*, *"Top Rated in Programming"*).
-- **⭐ Real-Time Notification Center:** Dropdown & dedicated modal hub delivering instant alerts:
+- **🎯 Centered Navbar Branding:** Clean top navigation with centered **LMS** title and collapsible sidebar icon.
+- **👤 User Switcher Popover:** Profile avatar in the top right displaying current user's name (`a`, `Librarian`, `Admin`) and title (`Student`, `Librarian`, `Admin`).
+- **⭐ Smart Book Recommendations:** Intelligent scoring engine personalizing suggestions based on borrowing history, genre affinity, wishlist bookmarks, and reader ratings with match percentages (`98% Match`).
+- **⭐ Notification Center:** Dropdown & modal hub delivering real-time alerts:
   - 🔔 *"Your book is due tomorrow."*
   - ⚠️ *"You have ₹40 pending fine."*
   - 📚 *"Your reserved book is now available."*
   - 🎉 *"New books added in Programming."*
-- **🎛️ Collapsible Sidebar (Hide / Unhide):** Space-saving desktop icon-rail mode and fluid off-canvas drawer on mobile screens with top navbar toggle.
-- **🕒 Live System Clock & Pulse:** Top status widget showing real-time system time with live status dot.
-- **💰 Automated Indian Rupee (₹) Engine:** Real-time calculation of late fees (default: `₹5.00/day`), checkout drawer with card/UPI simulation, and digital receipt generation.
-- **💾 Browser-Synced Local State:** LocalStorage caching ensures seamless offline-ready data persistence across browser sessions.
-
----
-
-## 🏛️ System Architecture
-
-```mermaid
-graph TD
-    App[Aetheria Knowledge OS - Shell] --> LP[LibraryProvider - React Context]
-    LP --> Storage[(Browser LocalStorage - lms_v3)]
-    
-    LP --> Nav[Navbar - Search, Clock, Notifs & Persona Switcher]
-    LP --> Side[Sidebar - Collapsible Navigation Rail]
-    
-    LP --> SP[🎓 Scholar Portal]
-    LP --> LIB[📖 Circulation Desk]
-    LP --> ADM[⚙️ Apex Console]
-    
-    SP --> S1[Scholar Dashboard & Streaks]
-    SP --> S2[AI Smart Recommendations]
-    SP --> S3[Interactive Library Catalog]
-    SP --> S4[Fines & UPI/Card Payments]
-    
-    LIB --> L1[Book Inventory & Shelf Stacks]
-    LIB --> L2[Issue / Return Desk + Presets]
-    LIB --> L3[Hold Queue Approval Desk]
-    
-    ADM --> A1[Executive Analytics & Telemetry]
-    ADM --> A2[Patron Directory & RBAC]
-    ADM --> A3[Circulation Policies & CSV Exports]
-```
+- **🎛️ Collapsible Sidebar:** Toggle button in navbar and sidebar header to hide/unhide the navigation rail.
+- **🕒 Live Clock & Status:** Real-time system clock in the navbar with pulsating live status dot.
+- **💰 Indian Rupee (₹) Fine Engine:** Automatic calculation of late fees (default: `₹5.00/day`) and simulated UPI/Card payment checkout with receipts.
+- **💾 Local Persistence:** Browser-backed state synchronization (`localStorage`) preserving custom books, transactions, and settings.
 
 ---
 
@@ -109,38 +79,38 @@ LibraryManagementSystem/
 │   └── workflows/
 │       └── deploy.yml                      # GitHub Actions automated deployment
 ├── public/
-│   ├── favicon.svg                         # Aetheria OS Favicon
+│   ├── favicon.svg                         # Favicon
 │   └── icons.svg                           # SVG sprite definitions
 ├── src/
 │   ├── components/
 │   │   ├── Admin/
-│   │   │   ├── Dashboard.jsx               # Apex analytics & telemetry feed
-│   │   │   ├── LibrarySettings.jsx         # Circulation policies & fine rates (₹)
-│   │   │   └── UserManagement.jsx          # Patron & staff credentials management
+│   │   │   ├── Dashboard.jsx               # Metrics, charts & CSV exports
+│   │   │   ├── LibrarySettings.jsx         # Circulation rules & fine rates (₹)
+│   │   │   └── UserManagement.jsx          # User directory & access management
 │   │   ├── Librarian/
-│   │   │   ├── BookCatalog.jsx             # Inventory cataloger & shelf stack monitor
-│   │   │   ├── IssueReturn.jsx             # Circulation checkout desk & renewals
-│   │   │   └── Reservations.jsx            # Student hold requests & approval queue
+│   │   │   ├── BookCatalog.jsx             # Inventory management & stock monitor
+│   │   │   ├── IssueReturn.jsx             # Issue/return desk & renewals
+│   │   │   └── Reservations.jsx            # Hold requests & approval queue
 │   │   ├── Shared/
-│   │   │   ├── Modal.jsx                   # Reusable glassmorphic popup modal
-│   │   │   ├── Navbar.jsx                  # Clean navbar with Persona Switcher popover
+│   │   │   ├── Modal.jsx                   # Reusable glassmorphic modal
+│   │   │   ├── Navbar.jsx                  # Centered LMS navbar & user switcher
 │   │   │   ├── NotificationCenterModal.jsx # Multi-category notification center modal
-│   │   │   └── Sidebar.jsx                 # Collapsible navigation rail & brand badge
+│   │   │   └── Sidebar.jsx                 # Collapsible sidebar navigation
 │   │   └── Student/
 │   │       ├── SmartRecommendations.jsx    # AI personalized recommendations widget
 │   │       ├── StudentCatalog.jsx          # Book discovery, search & reader reviews
-│   │       ├── StudentDashboard.jsx        # Scholar dashboard, streaks & loan chips
+│   │       ├── StudentDashboard.jsx        # Dashboard, reading streak & active loans
 │   │       └── StudentFines.jsx            # Fine checkout gateway & digital receipts
 │   ├── context/
-│   │   └── LibraryContext.jsx              # Unified context & recommendation engine
+│   │   └── LibraryContext.jsx              # Unified state & recommendation engine
 │   ├── utils/
 │   │   └── mockData.js                     # Starter dataset & seed alerts
 │   ├── App.css                             # Layout helpers
-│   ├── App.jsx                             # Application shell & portal router
-│   ├── index.css                           # Aetheria Glassmorphic Design System
+│   ├── App.jsx                             # Application shell
+│   ├── index.css                           # Design system & tokens
 │   └── main.jsx                            # React 19 root mount
 ├── package.json                            # Scripts & dependencies
-├── README.md                               # Comprehensive documentation
+├── README.md                               # Project documentation
 └── vite.config.js                          # Vite bundler configuration
 ```
 
