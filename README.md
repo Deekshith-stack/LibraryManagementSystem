@@ -46,26 +46,6 @@
 
 ---
 
-# 🎬 Application Preview
-
-<div align="center">
-
-<!--
-IMPORTANT:
-Record your website screen and save it as:
-
-assets/library-demo.gif
-
-Then this animation will automatically appear here.
--->
-
-<img src="./assets/library-demo.gif" alt="Library Management System Demo Animation" width="900"/>
-
-</div>
-
-> 🎥 **Tip:** Add a 5–10 second screen recording showing navigation between the Student, Librarian, and Admin portals. Convert it into `library-demo.gif` and place it inside the `assets` folder.
-
----
 
 # ✨ Project Overview
 
