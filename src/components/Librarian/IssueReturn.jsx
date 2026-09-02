@@ -4,18 +4,18 @@ import { ArrowLeftRight, CheckCircle2, AlertTriangle, Calendar, Plus, User, Mail
 import { Modal } from '../Shared/Modal';
 
 export const IssueReturn = () => {
-  const { 
-    transactions, 
-    books, 
-    users, 
-    settings, 
-    issueBook, 
+  const {
+    transactions,
+    books,
+    users,
+    settings,
+    issueBook,
     returnBook,
     renewLoan,
     sendOverdueReminder
   } = useContext(LibraryContext);
 
-  const [activeTab, setActiveTab] = useState('active-loans'); // 'active-loans' | 'issue-desk'
+  const [activeTab, setActiveTab] = useState('active-loans'); // 'active-loans' | 'return-history'
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [overdueOnly, setOverdueOnly] = useState(false);
 
@@ -27,25 +27,25 @@ export const IssueReturn = () => {
   const [successMsg, setSuccessMsg] = useState('');
 
   // Filter students and books
-  const activeStudents = users.filter(u => u.role === 'student' && u.status === 'active');
-  const availableBooks = books.filter(b => b.copiesAvailable > 0);
-  
-  const activeTxs = transactions.filter(t => !t.returnDate);
+  const activeStudents = (users || []).filter(u => u.role === 'student' && u.status === 'active');
+  const availableBooks = (books || []).filter(b => b.copiesAvailable > 0);
+
+  const activeTxs = (transactions || []).filter(t => !t.returnDate);
   const filteredActiveTxs = activeTxs.filter(tx => {
     return !overdueOnly || tx.status === 'overdue';
   });
-  
-  const historyTxs = transactions.filter(t => t.returnDate);
+
+  const historyTxs = (transactions || []).filter(t => t.returnDate);
 
   const handleOpenIssue = () => {
     setStudentId(activeStudents[0]?.id || '');
     setBookId(availableBooks[0]?.id || '');
-    
+
     // Default due date
     const d = new Date();
     d.setDate(d.getDate() + settings.borrowPeriodDays);
     setDueDate(d.toISOString().split('T')[0]);
-    
+
     setErrorMsg('');
     setSuccessMsg('');
     setIsIssueModalOpen(true);
@@ -97,13 +97,13 @@ export const IssueReturn = () => {
 
       {/* Tabs */}
       <div className="tabs-header">
-        <button 
+        <button
           className={`tab-btn ${activeTab === 'active-loans' ? 'active' : ''}`}
           onClick={() => setActiveTab('active-loans')}
         >
           Active Loans ({activeTxs.length})
         </button>
-        <button 
+        <button
           className={`tab-btn ${activeTab === 'return-history' ? 'active' : ''}`}
           onClick={() => setActiveTab('return-history')}
         >
@@ -117,12 +117,12 @@ export const IssueReturn = () => {
             <h2 style={{ fontSize: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: 0 }}>
               <ArrowLeftRight size={20} className="gradient-text" /> Outstanding Loans
             </h2>
-            
+
             <label className="flex-align" style={{ gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-              <input 
-                type="checkbox" 
-                checked={overdueOnly} 
-                onChange={(e) => setOverdueOnly(e.target.checked)} 
+              <input
+                type="checkbox"
+                checked={overdueOnly}
+                onChange={(e) => setOverdueOnly(e.target.checked)}
                 style={{ cursor: 'pointer' }}
               />
               <span>Filter Overdue Only</span>
@@ -164,7 +164,7 @@ export const IssueReturn = () => {
                         <td>{tx.issueDate}</td>
                         <td>{tx.dueDate}</td>
                         <td style={{ color: tx.fineAmount > 0 ? 'var(--accent-red)' : 'inherit', fontWeight: tx.fineAmount > 0 ? 600 : 400 }}>
-                          ${tx.fineAmount.toFixed(2)}
+                          ₹{tx.fineAmount.toFixed(2)}
                         </td>
                         <td>
                           <span className={`badge ${isOverdue ? 'red' : 'green'}`}>
@@ -174,8 +174,8 @@ export const IssueReturn = () => {
                         <td>
                           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.4rem' }}>
                             {isOverdue && (
-                              <button 
-                                className="btn-premium secondary" 
+                              <button
+                                className="btn-premium secondary"
                                 style={{ padding: '0.4rem', borderRadius: '6px' }}
                                 title="Send Overdue Reminder"
                                 onClick={() => handleSendNotice(tx.id)}
@@ -183,16 +183,16 @@ export const IssueReturn = () => {
                                 <Mail size={14} style={{ color: 'var(--accent-orange)' }} />
                               </button>
                             )}
-                            <button 
-                              className="btn-premium secondary" 
+                            <button
+                              className="btn-premium secondary"
                               style={{ padding: '0.4rem', borderRadius: '6px' }}
                               title="Renew Loan (Extend 7 Days)"
                               onClick={() => handleRenew(tx.id)}
                             >
                               <RefreshCw size={14} style={{ color: 'var(--accent-cyan)' }} />
                             </button>
-                            <button 
-                              className="btn-premium success" 
+                            <button
+                              className="btn-premium success"
                               style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', borderRadius: '6px' }}
                               onClick={() => handleReturn(tx.id)}
                             >
@@ -242,12 +242,12 @@ export const IssueReturn = () => {
                       <td style={{ fontWeight: 500 }}>{tx.bookTitle}</td>
                       <td>{tx.issueDate}</td>
                       <td>{tx.dueDate}</td>
-                      <td style={{ fontWeight: 600, color: 'var(--accent-cyan)' }}>{tx.returnDate}</td>
+                      <td style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>{tx.returnDate}</td>
                       <td>
                         {tx.fineAmount > 0 ? (
-                          <span style={{ color: 'var(--accent-red)', fontWeight: 600 }}>${tx.fineAmount.toFixed(2)}</span>
+                          <span style={{ color: 'var(--accent-red)', fontWeight: 600 }}>₹{tx.fineAmount.toFixed(2)}</span>
                         ) : (
-                          <span style={{ color: 'var(--text-muted)' }}>$0.00</span>
+                          <span style={{ color: 'var(--text-muted)' }}>₹0.00</span>
                         )}
                       </td>
                       <td>
@@ -288,7 +288,7 @@ export const IssueReturn = () => {
             {activeStudents.length === 0 ? (
               <p style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>No active/un-suspended students found in Directory.</p>
             ) : (
-              <select 
+              <select
                 className="glass-input glass-select"
                 value={studentId}
                 onChange={(e) => setStudentId(e.target.value)}
@@ -307,7 +307,7 @@ export const IssueReturn = () => {
             {availableBooks.length === 0 ? (
               <p style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>No available books in stock.</p>
             ) : (
-              <select 
+              <select
                 className="glass-input glass-select"
                 value={bookId}
                 onChange={(e) => setBookId(e.target.value)}
@@ -324,9 +324,9 @@ export const IssueReturn = () => {
           <div className="form-group">
             <label className="form-label">Return Due Date</label>
             <div style={{ position: 'relative' }}>
-              <input 
-                type="date" 
-                className="glass-input" 
+              <input
+                type="date"
+                className="glass-input"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
                 required

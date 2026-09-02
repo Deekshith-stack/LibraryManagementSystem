@@ -1,13 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
-import { Search, Filter, BookOpen, Clock, Check, AlertCircle, Bookmark, Star, MessageSquare, Send } from 'lucide-react';
+import { Search, Filter, BookOpen, Clock, Check, AlertCircle, Bookmark, Star, MessageSquare, Send, Sparkles } from 'lucide-react';
 import { Modal } from '../Shared/Modal';
 
 export const StudentCatalog = ({ searchVal }) => {
   const { books, currentUser, requestReservation, reservations, toggleWishlist, addBookReview } = useContext(LibraryContext);
   
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [catalogTab, setCatalogTab] = useState('all'); // 'all' | 'wishlist'
+  const [catalogTab, setCatalogTab] = useState('all'); // 'all' | 'wishlist' | 'recommended'
   
   // Book details / review modal state
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -27,14 +27,18 @@ export const StudentCatalog = ({ searchVal }) => {
       
     const matchesCategory = selectedCategory === 'All' || book.category === selectedCategory;
     
-    const isBookWishlisted = book.wishlist && book.wishlist.includes(currentUser.id);
-    const matchesTab = catalogTab === 'all' || isBookWishlisted;
+    const isBookWishlisted = book.wishlist && book.wishlist.includes(currentUser?.id);
+    const isRecommended = book.rating >= 4.7 || book.category === 'Programming';
+    
+    let matchesTab = true;
+    if (catalogTab === 'wishlist') matchesTab = isBookWishlisted;
+    if (catalogTab === 'recommended') matchesTab = isRecommended;
 
     return matchesSearch && matchesCategory && matchesTab;
   });
 
   const getReservationStatus = (bookId) => {
-    const match = reservations.find(r => r.bookId === bookId && r.studentId === currentUser.id && r.status === 'pending');
+    const match = reservations.find(r => r.bookId === bookId && r.studentId === currentUser?.id && r.status === 'pending');
     return match ? 'pending' : null;
   };
 
@@ -57,7 +61,6 @@ export const StudentCatalog = ({ searchVal }) => {
     addBookReview(selectedBookForDetail.id, currentUser.name, userRating, userComment);
     
     // Refresh modal data
-    const updatedBook = books.find(b => b.id === selectedBookForDetail.id);
     setSelectedBookForDetail({
       ...selectedBookForDetail,
       reviews: [
@@ -128,10 +131,17 @@ export const StudentCatalog = ({ searchVal }) => {
           All Library Catalog
         </button>
         <button 
+          className={`tab-btn ${catalogTab === 'recommended' ? 'active' : ''}`}
+          onClick={() => setCatalogTab('recommended')}
+        >
+          <Sparkles size={14} style={{ display: 'inline', marginRight: '4px', color: 'var(--accent-purple)' }} />
+          Smart Recommendations
+        </button>
+        <button 
           className={`tab-btn ${catalogTab === 'wishlist' ? 'active' : ''}`}
           onClick={() => setCatalogTab('wishlist')}
         >
-          My Wishlist Bookmark
+          My Wishlist Bookmarks
         </button>
       </div>
 
@@ -151,7 +161,7 @@ export const StudentCatalog = ({ searchVal }) => {
           {filteredBooks.map(book => {
             const hasRequested = getReservationStatus(book.id);
             const isOut = book.copiesAvailable === 0;
-            const isWish = book.wishlist && book.wishlist.includes(currentUser.id);
+            const isWish = book.wishlist && book.wishlist.includes(currentUser?.id);
 
             return (
               <div key={book.id} className="glass-card book-card">
@@ -208,13 +218,13 @@ export const StudentCatalog = ({ searchVal }) => {
                   <p className="book-author">by {book.author}</p>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'between' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span>Location:</span>
-                      <span style={{ color: 'var(--text-primary)', marginLeft: 'auto', fontWeight: 500 }}>{book.location}</span>
+                      <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{book.location}</span>
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'between' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span>Stock Status:</span>
-                      <span className={`badge ${isOut ? 'red' : 'green'}`} style={{ marginLeft: 'auto', padding: '0.1rem 0.5rem', fontSize: '0.7rem' }}>
+                      <span className={`badge ${isOut ? 'red' : 'green'}`} style={{ padding: '0.1rem 0.5rem', fontSize: '0.7rem' }}>
                         {isOut ? 'Out of Stock' : `${book.copiesAvailable} Left`}
                       </span>
                     </div>
@@ -230,7 +240,7 @@ export const StudentCatalog = ({ searchVal }) => {
                     >
                       <MessageSquare size={14} /> Reviews ({book.reviews?.length || 0})
                     </button>
-                    <span className="book-price">${book.price.toFixed(2)}</span>
+                    <span className="book-price">₹{book.price.toFixed(2)}</span>
                   </div>
 
                   <div className="book-actions">
@@ -243,7 +253,7 @@ export const StudentCatalog = ({ searchVal }) => {
                         className={`btn-premium ${isOut ? 'secondary' : 'primary'}`} 
                         style={{ width: '100%' }}
                         onClick={() => handleReserve(book)}
-                        disabled={currentUser.status !== 'active'}
+                        disabled={currentUser?.status !== 'active'}
                       >
                         {isOut ? (
                           <>
@@ -291,6 +301,9 @@ export const StudentCatalog = ({ searchVal }) => {
                   {renderStars(selectedBookForDetail.rating || 0)}
                   <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {selectedBookForDetail.rating > 0 ? `${selectedBookForDetail.rating} / 5` : 'No reviews'}
+                  </span>
+                  <span style={{ marginLeft: 'auto', fontWeight: 800, fontSize: '1.1rem', color: 'var(--accent-cyan)' }}>
+                    ₹{selectedBookForDetail.price.toFixed(2)}
                   </span>
                 </div>
                 <code style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>ISBN: {selectedBookForDetail.isbn}</code>

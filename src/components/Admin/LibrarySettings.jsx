@@ -5,9 +5,9 @@ import { Settings2, Save, Sparkles, CheckCircle2 } from 'lucide-react';
 export const LibrarySettings = () => {
   const { settings, updateSettings } = useContext(LibraryContext);
 
-  const [fineRatePerDay, setFineRatePerDay] = useState(settings.fineRatePerDay);
-  const [maxBooksAllowed, setMaxBooksAllowed] = useState(settings.maxBooksAllowed);
-  const [borrowPeriodDays, setBorrowPeriodDays] = useState(settings.borrowPeriodDays);
+  const [fineRatePerDay, setFineRatePerDay] = useState(settings?.fineRatePerDay || 5);
+  const [maxBooksAllowed, setMaxBooksAllowed] = useState(settings?.maxBooksAllowed || 4);
+  const [borrowPeriodDays, setBorrowPeriodDays] = useState(settings?.borrowPeriodDays || 14);
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = (e) => {
@@ -48,10 +48,10 @@ export const LibrarySettings = () => {
             )}
 
             <div className="form-group">
-              <label className="form-label">Overdue Fine Rate ($ per day)</label>
+              <label className="form-label">Overdue Fine Rate (₹ per day)</label>
               <input 
                 type="number" 
-                step="0.05"
+                step="0.50"
                 min="0"
                 className="glass-input"
                 value={fineRatePerDay}
@@ -67,11 +67,11 @@ export const LibrarySettings = () => {
               <label className="form-label">Max Allowed Books per Student</label>
               <input 
                 type="number" 
-                min="1"
-                className="glass-input"
-                value={maxBooksAllowed}
-                onChange={(e) => setMaxBooksAllowed(parseInt(e.target.value) || 1)}
-                required
+                min="1" 
+                className="glass-input" 
+                value={maxBooksAllowed} 
+                onChange={(e) => setMaxBooksAllowed(parseInt(e.target.value) || 1)} 
+                required 
               />
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
                 Maximum number of active checked-out books a student can hold simultaneously.
@@ -82,11 +82,11 @@ export const LibrarySettings = () => {
               <label className="form-label">Standard Borrow Period (Days)</label>
               <input 
                 type="number" 
-                min="1"
-                className="glass-input"
-                value={borrowPeriodDays}
-                onChange={(e) => setBorrowPeriodDays(parseInt(e.target.value) || 1)}
-                required
+                min="1" 
+                className="glass-input" 
+                value={borrowPeriodDays} 
+                onChange={(e) => setBorrowPeriodDays(parseInt(e.target.value) || 1)} 
+                required 
               />
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.4rem' }}>
                 Standard count of days allowed for lending out books before marking as overdue.
@@ -112,17 +112,17 @@ export const LibrarySettings = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', fontSize: '0.9rem', marginTop: '1.5rem' }}>
               <div>
                 <span style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600 }}>Daily Fine Fee</span>
-                <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>${settings.fineRatePerDay.toFixed(2)}</span>
+                <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>₹{(settings?.fineRatePerDay || 5).toFixed(2)}</span>
               </div>
               
               <div>
                 <span style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600 }}>Lending Limit</span>
-                <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent-indigo)' }}>{settings.maxBooksAllowed} Books</span>
+                <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent-indigo)' }}>{settings?.maxBooksAllowed || 4} Books</span>
               </div>
 
               <div>
                 <span style={{ display: 'block', color: 'var(--text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase', fontWeight: 600 }}>Lending Duration</span>
-                <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent-purple)' }}>{settings.borrowPeriodDays} Days</span>
+                <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--accent-purple)' }}>{settings?.borrowPeriodDays || 14} Days</span>
               </div>
             </div>
           </div>

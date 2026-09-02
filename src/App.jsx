@@ -20,19 +20,24 @@ import LibrarySettings from './components/Admin/LibrarySettings';
 
 function MainApp() {
   const { currentUser } = useContext(LibraryContext);
-  const [currentTab, setCurrentTab] = useState('');
+  const [currentTab, setCurrentTab] = useState('student-dashboard');
   const [searchVal, setSearchVal] = useState('');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(prev => !prev);
+  };
 
   // Render content based on current selected tab
   const renderTabContent = () => {
     switch (currentTab) {
       // Student Portal
       case 'student-dashboard':
-        return <StudentDashboard searchVal={searchVal} />;
+        return <StudentDashboard searchVal={searchVal} onNavigateTab={setCurrentTab} />;
       case 'student-catalog':
-        return <StudentCatalog searchVal={searchVal} />;
+        return <StudentCatalog searchVal={searchVal} onNavigateTab={setCurrentTab} />;
       case 'student-fines':
-        return <StudentFines />;
+        return <StudentFines onNavigateTab={setCurrentTab} />;
 
       // Librarian Portal
       case 'lib-catalog':
@@ -53,7 +58,7 @@ function MainApp() {
       default:
         return (
           <div className="glass-card empty-state" style={{ margin: '2rem' }}>
-            <h3 className="empty-state-title">Loading LMS Interface...</h3>
+            <h3 className="empty-state-title">Loading Library Interface...</h3>
             <p className="empty-state-desc">Initializing session state.</p>
           </div>
         );
@@ -61,10 +66,22 @@ function MainApp() {
   };
 
   return (
-    <div className="app-container">
-      <Sidebar currentTab={currentTab} setCurrentTab={setCurrentTab} />
+    <div className={`app-container ${isSidebarCollapsed ? 'sidebar-is-collapsed' : ''}`}>
+      <Sidebar 
+        currentTab={currentTab} 
+        setCurrentTab={setCurrentTab} 
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={toggleSidebar}
+      />
+      
       <div className="main-content">
-        <Navbar searchVal={searchVal} setSearchVal={setSearchVal} />
+        <Navbar 
+          searchVal={searchVal} 
+          setSearchVal={setSearchVal}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleSidebar={toggleSidebar}
+          onNavigateTab={setCurrentTab}
+        />
         <main className="page-container">
           {renderTabContent()}
         </main>

@@ -4,8 +4,6 @@ import {
   BarChart3, 
   Users, 
   BookOpen, 
-  DollarSign, 
-  ShieldAlert, 
   Download, 
   History, 
   Trash2, 
@@ -19,17 +17,15 @@ export const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'audit'
 
   // Statistics calculation
-  const totalBooksCount = books.reduce((sum, b) => sum + b.totalCopies, 0);
-  const activeLoansCount = transactions.filter(t => !t.returnDate).length;
-  const overdueCount = transactions.filter(t => !t.returnDate && t.status === 'overdue').length;
-  const totalRegisteredUsers = users.length;
+  const totalBooksCount = (books || []).reduce((sum, b) => sum + b.totalCopies, 0);
+  const activeLoansCount = (transactions || []).filter(t => !t.returnDate).length;
+  const totalRegisteredUsers = (users || []).length;
   
-  // Total fines calculated dynamically from payment records
+  // Total fines calculated dynamically from payment records in ₹
   const totalFinesCollected = paymentRecords ? paymentRecords.reduce((sum, r) => sum + r.amountPaid, 0) : 0;
-  const activeUnpaidFines = transactions.reduce((sum, t) => sum + (t.returnDate ? 0 : t.fineAmount), 0);
 
   // Category distribution for charts
-  const categoryCounts = books.reduce((acc, book) => {
+  const categoryCounts = (books || []).reduce((acc, book) => {
     acc[book.category] = (acc[book.category] || 0) + book.totalCopies;
     return acc;
   }, {});
@@ -41,8 +37,8 @@ export const Dashboard = () => {
     percentage: totalCopiesOfAll > 0 ? (count / totalCopiesOfAll) * 100 : 0
   }));
 
-  // Dynamic Popular Books Leaderboard (calculated from borrow history)
-  const borrowCounts = transactions.reduce((acc, tx) => {
+  // Dynamic Popular Books Leaderboard
+  const borrowCounts = (transactions || []).reduce((acc, tx) => {
     acc[tx.bookTitle] = (acc[tx.bookTitle] || 0) + 1;
     return acc;
   }, {});
@@ -58,7 +54,7 @@ export const Dashboard = () => {
       };
     })
     .sort((a, b) => b.count - a.count)
-    .slice(0, 3); // Top 3 popular books
+    .slice(0, 3);
 
   // CSV Exporter helper
   const handleExportCSV = (type) => {
@@ -73,13 +69,13 @@ export const Dashboard = () => {
         Author: b.author,
         ISBN: b.isbn,
         Category: b.category,
-        Price: b.price,
+        Price_INR: b.price,
         Total_Copies: b.totalCopies,
         Available_Copies: b.copiesAvailable,
         Shelf_Location: b.location
       }));
       filename = 'Library_Books_Catalog.csv';
-      headers = ['ID', 'Title', 'Author', 'ISBN', 'Category', 'Price', 'Total_Copies', 'Available_Copies', 'Shelf_Location'];
+      headers = ['ID', 'Title', 'Author', 'ISBN', 'Category', 'Price_INR', 'Total_Copies', 'Available_Copies', 'Shelf_Location'];
     } else if (type === 'users') {
       data = users.map(u => ({
         ID: u.id,
@@ -100,16 +96,15 @@ export const Dashboard = () => {
         Issue_Date: t.issueDate,
         Due_Date: t.dueDate,
         Return_Date: t.returnDate || 'Active Out',
-        Fine_Amount: t.fineAmount,
+        Fine_Amount_INR: t.fineAmount,
         Status: t.status
       }));
       filename = 'Library_Circulation_Logs.csv';
-      headers = ['Transaction_ID', 'Book_Title', 'Student_Name', 'Student_ID', 'Issue_Date', 'Due_Date', 'Return_Date', 'Fine_Amount', 'Status'];
+      headers = ['Transaction_ID', 'Book_Title', 'Student_Name', 'Student_ID', 'Issue_Date', 'Due_Date', 'Return_Date', 'Fine_Amount_INR', 'Status'];
     }
 
     if (data.length === 0) return;
 
-    // Build CSV Content
     const csvRows = [];
     csvRows.push(headers.join(','));
 
@@ -150,7 +145,7 @@ export const Dashboard = () => {
       <div className="flex-between" style={{ marginBottom: '2rem' }}>
         <div>
           <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>Library Management Control</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Advanced operations portal containing system logs, leaders, and data exports.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Executive portal containing system logs, inventory statistics, and CSV data exports.</p>
         </div>
 
         {/* Tab switchers */}
@@ -209,10 +204,10 @@ export const Dashboard = () => {
 
             <div className="glass-card stat-card">
               <div className="stat-icon green">
-                <DollarSign size={24} />
+                <span style={{ fontSize: '1.4rem', fontWeight: 800 }}>₹</span>
               </div>
               <div className="stat-details">
-                <span className="stat-value">${totalFinesCollected.toFixed(2)}</span>
+                <span className="stat-value">₹{totalFinesCollected.toFixed(2)}</span>
                 <span className="stat-title">Collected Fines</span>
               </div>
             </div>
@@ -254,7 +249,7 @@ export const Dashboard = () => {
                 
                 {leaderboard.length === 0 ? (
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', textAlign: 'center', padding: '2rem' }}>
-                    No checkout metrics recorded yet.
+                    Fresh session initialized. As books are checked out, the popularity leaderboard will update in real time.
                   </p>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -288,7 +283,7 @@ export const Dashboard = () => {
           {/* Recent Payments Logs */}
           <div className="glass-card" style={{ marginBottom: '2rem' }}>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <DollarSign size={18} style={{ color: 'var(--accent-green)' }} /> Recent Fine Payments Received
+              <span style={{ color: 'var(--accent-green)', fontWeight: 800 }}>₹</span> Recent Fine Payments Received
             </h3>
 
             {paymentRecords && paymentRecords.length === 0 ? (
@@ -314,7 +309,7 @@ export const Dashboard = () => {
                         <td style={{ fontWeight: 600 }}>{pay.studentName}</td>
                         <td>{pay.bookTitle}</td>
                         <td>{pay.date}</td>
-                        <td style={{ fontWeight: 700, color: 'var(--accent-green)' }}>${pay.amountPaid.toFixed(2)}</td>
+                        <td style={{ fontWeight: 700, color: 'var(--accent-green)' }}>₹{pay.amountPaid.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -327,10 +322,10 @@ export const Dashboard = () => {
           <div className="glass-card">
             <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: '1.25rem' }}>Data Export Center</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-              Export system inventory databases to CSV spreadsheets for local spreadsheets and reporting.
+              Export system inventory databases to CSV spreadsheets for local analysis and reporting.
             </p>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
               <button className="btn-premium secondary" onClick={() => handleExportCSV('books')} style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', padding: '1rem' }}>
                 <Download size={16} />
                 <span>Export Books Inventory</span>
@@ -338,7 +333,7 @@ export const Dashboard = () => {
 
               <button className="btn-premium secondary" onClick={() => handleExportCSV('users')} style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', padding: '1rem' }}>
                 <Download size={16} />
-                <span>Export Users Database</span>
+                <span>Export Users Directory</span>
               </button>
 
               <button className="btn-premium secondary" onClick={() => handleExportCSV('transactions')} style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', padding: '1rem' }}>
@@ -362,12 +357,12 @@ export const Dashboard = () => {
           </div>
 
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-            Audits all library occurrences (member registrations, checkout checkout approvals, returns, settings modifications) in real time.
+            Audits all library occurrences (member registrations, checkouts, returns, settings modifications) in real time.
           </p>
 
           <div style={{ border: '1px solid var(--border-color)', borderRadius: '12px', overflow: 'hidden', background: 'rgba(15,22,38,0.2)' }}>
             <div style={{ maxHeight: '450px', overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {systemLogs.length === 0 ? (
+              {(systemLogs || []).length === 0 ? (
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', textAlign: 'center', padding: '3rem 0' }}>
                   System log is currently empty.
                 </p>

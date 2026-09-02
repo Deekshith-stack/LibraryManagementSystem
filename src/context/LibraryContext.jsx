@@ -1,18 +1,41 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useMemo, useCallback } from 'react';
 import {
   initialBooks,
   initialUsers,
   initialTransactions,
   initialReservations,
-  initialSettings
+  initialSettings,
+  initialNotifications
 } from '../utils/mockData';
 
 export const LibraryContext = createContext();
 
 export const LibraryProvider = ({ children }) => {
-  // Load initial state from local storage or defaults
+  // Clear any legacy localStorage versions from earlier iterations to ensure fresh start
+  useEffect(() => {
+    try {
+      const oldVersion = localStorage.getItem('lms_data_version');
+      if (oldVersion !== '3.0') {
+        localStorage.removeItem('lms_books');
+        localStorage.removeItem('lms_users');
+        localStorage.removeItem('lms_transactions');
+        localStorage.removeItem('lms_reservations');
+        localStorage.removeItem('lms_settings');
+        localStorage.removeItem('lms_payment_records');
+        localStorage.removeItem('lms_notifications');
+        localStorage.removeItem('lms_sessions');
+        localStorage.removeItem('lms_system_logs');
+        localStorage.removeItem('lms_current_user_id');
+        localStorage.setItem('lms_data_version', '3.0');
+      }
+    } catch (e) {
+      console.warn("LocalStorage clear failed", e);
+    }
+  }, []);
+
+  // Books State
   const [books, setBooks] = useState(() => {
-    const saved = localStorage.getItem('lms_books');
+    const saved = localStorage.getItem('lms_v3_books');
     return saved ? JSON.parse(saved) : initialBooks.map(b => ({
       ...b,
       reviews: b.reviews || [],
@@ -21,146 +44,116 @@ export const LibraryProvider = ({ children }) => {
     }));
   });
 
+  // Users State
   const [users, setUsers] = useState(() => {
-    const saved = localStorage.getItem('lms_users');
+    const saved = localStorage.getItem('lms_v3_users');
     return saved ? JSON.parse(saved) : initialUsers;
   });
 
+  // Transactions State (Loans)
   const [transactions, setTransactions] = useState(() => {
-    const saved = localStorage.getItem('lms_transactions');
+    const saved = localStorage.getItem('lms_v3_transactions');
     return saved ? JSON.parse(saved) : initialTransactions;
   });
 
+  // Reservations State
   const [reservations, setReservations] = useState(() => {
-    const saved = localStorage.getItem('lms_reservations');
+    const saved = localStorage.getItem('lms_v3_reservations');
     return saved ? JSON.parse(saved) : initialReservations;
   });
 
+  // Settings State (Fine rate in ₹, etc.)
   const [settings, setSettings] = useState(() => {
-    const saved = localStorage.getItem('lms_settings');
+    const saved = localStorage.getItem('lms_v3_settings');
     return saved ? JSON.parse(saved) : initialSettings;
   });
 
   // Payment Records State
   const [paymentRecords, setPaymentRecords] = useState(() => {
-    const saved = localStorage.getItem('lms_payment_records');
-    if (saved) return JSON.parse(saved);
-    
-    // Seed initial payment history
-    const today = new Date().toISOString().split('T')[0];
-    return [
-      {
-        id: "pay-1",
-        studentId: "user-student-1",
-        studentName: "Alex Mercer",
-        bookTitle: "Clean Code",
-        amountPaid: 15.00,
-        date: today
-      }
-    ];
+    const saved = localStorage.getItem('lms_v3_payment_records');
+    return saved ? JSON.parse(saved) : [];
   });
 
-  // Notifications State (targets 'admin', 'librarian', or 'student')
+  // Notifications State
   const [notifications, setNotifications] = useState(() => {
-    const saved = localStorage.getItem('lms_notifications');
-    if (saved) return JSON.parse(saved);
-    
-    return [
-      {
-        id: "notif-1",
-        text: "System initialized with library seed catalog.",
-        timestamp: "09:00 AM",
-        read: false,
-        role: "admin"
-      },
-      {
-        id: "notif-2",
-        text: "New book reservation hold requested by Alex Mercer.",
-        timestamp: "10:10 AM",
-        read: false,
-        role: "librarian"
-      }
-    ];
+    const saved = localStorage.getItem('lms_v3_notifications');
+    return saved ? JSON.parse(saved) : initialNotifications;
   });
 
   // User Sessions State (track login/logout times)
   const [sessions, setSessions] = useState(() => {
-    const saved = localStorage.getItem('lms_sessions');
+    const saved = localStorage.getItem('lms_v3_sessions');
     if (saved) return JSON.parse(saved);
     
-    // Seed initial session times
     const initial = {};
     initialUsers.forEach(u => {
-      initial[u.id] = { login: '09:00:00 AM', logout: '05:00:00 PM' };
+      initial[u.id] = { login: '09:00:00 AM', logout: 'Never' };
     });
     return initial;
   });
 
   // System Audit Logs State
   const [systemLogs, setSystemLogs] = useState(() => {
-    const saved = localStorage.getItem('lms_system_logs');
+    const saved = localStorage.getItem('lms_v3_system_logs');
     if (saved) return JSON.parse(saved);
     
-    // Seed initial logs
     const today = new Date().toISOString().split('T')[0];
     return [
-      { id: 'log-1', timestamp: `${today}, 09:00:00 AM`, text: "LMS engine initialized with seed catalog.", type: "info" },
-      { id: 'log-2', timestamp: `${today}, 09:15:30 AM`, text: "Global library settings updated. Fine rate set to $1.50/day.", type: "settings" },
-      { id: 'log-3', timestamp: `${today}, 10:20:45 AM`, text: "Student Bruce Wayne was suspended due to overdue loans.", type: "security" }
+      { id: 'log-1', timestamp: `${today}, 09:00:00 AM`, text: "Library Management System initialized with fresh seed catalog.", type: "info" }
     ];
   });
 
-  // Default to the first student
+  // Current Active User (defaults to student 'a')
   const [currentUser, setCurrentUser] = useState(() => {
-    const saved = localStorage.getItem('lms_current_user_id');
+    const saved = localStorage.getItem('lms_v3_current_user_id');
     const matched = users.find(u => u.id === saved);
-    return matched || users.find(u => u.role === 'student') || users[0];
+    return matched || users.find(u => u.name === 'a') || users[0];
   });
 
   // Synchronize state with local storage
   useEffect(() => {
-    localStorage.setItem('lms_books', JSON.stringify(books));
+    localStorage.setItem('lms_v3_books', JSON.stringify(books));
   }, [books]);
 
   useEffect(() => {
-    localStorage.setItem('lms_users', JSON.stringify(users));
+    localStorage.setItem('lms_v3_users', JSON.stringify(users));
   }, [users]);
 
   useEffect(() => {
-    localStorage.setItem('lms_transactions', JSON.stringify(transactions));
+    localStorage.setItem('lms_v3_transactions', JSON.stringify(transactions));
   }, [transactions]);
 
   useEffect(() => {
-    localStorage.setItem('lms_reservations', JSON.stringify(reservations));
+    localStorage.setItem('lms_v3_reservations', JSON.stringify(reservations));
   }, [reservations]);
 
   useEffect(() => {
-    localStorage.setItem('lms_settings', JSON.stringify(settings));
+    localStorage.setItem('lms_v3_settings', JSON.stringify(settings));
   }, [settings]);
 
   useEffect(() => {
-    localStorage.setItem('lms_payment_records', JSON.stringify(paymentRecords));
+    localStorage.setItem('lms_v3_payment_records', JSON.stringify(paymentRecords));
   }, [paymentRecords]);
 
   useEffect(() => {
-    localStorage.setItem('lms_notifications', JSON.stringify(notifications));
+    localStorage.setItem('lms_v3_notifications', JSON.stringify(notifications));
   }, [notifications]);
 
   useEffect(() => {
-    localStorage.setItem('lms_sessions', JSON.stringify(sessions));
+    localStorage.setItem('lms_v3_sessions', JSON.stringify(sessions));
   }, [sessions]);
 
   useEffect(() => {
-    localStorage.setItem('lms_system_logs', JSON.stringify(systemLogs));
+    localStorage.setItem('lms_v3_system_logs', JSON.stringify(systemLogs));
   }, [systemLogs]);
 
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem('lms_current_user_id', currentUser.id);
+      localStorage.setItem('lms_v3_current_user_id', currentUser.id);
     }
   }, [currentUser]);
 
-  // Recalculate fines dynamically for un-returned books that are overdue
+  // Recalculate fines dynamically for overdue transactions in ₹
   useEffect(() => {
     const interval = setInterval(() => {
       const today = new Date().toISOString().split('T')[0];
@@ -189,7 +182,7 @@ export const LibraryProvider = ({ children }) => {
       if (updated) {
         setTransactions(newTx);
       }
-    }, 10000); // Check every 10s
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [transactions, settings.fineRatePerDay]);
@@ -214,7 +207,7 @@ export const LibraryProvider = ({ children }) => {
   };
 
   // Notification creation helper
-  const addNotification = (text, targetRole) => {
+  const addNotification = (text, targetRole = 'student', type = 'info', actionTab = '') => {
     const date = new Date();
     const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const newNotif = {
@@ -222,7 +215,9 @@ export const LibraryProvider = ({ children }) => {
       text,
       timestamp: timeStr,
       read: false,
-      role: targetRole
+      role: targetRole,
+      type,
+      actionTab
     };
     setNotifications(prev => [newNotif, ...prev]);
   };
@@ -231,18 +226,29 @@ export const LibraryProvider = ({ children }) => {
     setNotifications(prev => prev.map(n => n.id === notifId ? { ...n, read: true } : n));
   };
 
-  const clearNotifications = (role) => {
-    setNotifications(prev => prev.filter(n => n.role !== role));
+  const markAllNotificationsRead = (role) => {
+    setNotifications(prev => prev.map(n => (!role || n.role === role) ? { ...n, read: true } : n));
   };
 
-  // Actions
+  const deleteNotification = (notifId) => {
+    setNotifications(prev => prev.filter(n => n.id !== notifId));
+  };
+
+  const clearNotifications = (role) => {
+    if (role) {
+      setNotifications(prev => prev.filter(n => n.role !== role));
+    } else {
+      setNotifications([]);
+    }
+  };
+
+  // Switch active user
   const changeCurrentUser = (userId) => {
     const nextUser = users.find(u => u.id === userId);
     if (!nextUser) return;
 
     const timeStr = new Date().toLocaleTimeString();
 
-    // Update session login and logout times
     setSessions(prev => ({
       ...prev,
       [currentUser.id]: {
@@ -256,7 +262,7 @@ export const LibraryProvider = ({ children }) => {
       }
     }));
 
-    logEvent(`User "${currentUser.name}" logged out.`, "user");
+    logEvent(`User "${currentUser.name}" switched session.`, "user");
     setCurrentUser(nextUser);
     logEvent(`User "${nextUser.name}" logged in (Role: ${nextUser.role}).`, "user");
   };
@@ -274,8 +280,8 @@ export const LibraryProvider = ({ children }) => {
       rating: 0
     };
     setBooks(prev => [...prev, newBook]);
-    logEvent(`Book "${newBook.title}" by ${newBook.author} was cataloged in the system.`, "book");
-    addNotification(`New book cataloged: "${newBook.title}" by ${newBook.author}.`, 'student');
+    logEvent(`Book "${newBook.title}" by ${newBook.author} added to inventory.`, "book");
+    addNotification(`🎉 New books added in ${newBook.category}: "${newBook.title}".`, 'student', 'new_arrival', 'student-catalog');
   };
 
   const updateBook = (updatedBook) => {
@@ -286,15 +292,14 @@ export const LibraryProvider = ({ children }) => {
       totalCopies: parseInt(updatedBook.totalCopies),
       copiesAvailable: Math.min(parseInt(updatedBook.totalCopies), b.copiesAvailable + (parseInt(updatedBook.totalCopies) - b.totalCopies))
     } : b));
-    logEvent(`Modified attributes for book "${updatedBook.title}".`, "book");
+    logEvent(`Updated metadata for "${updatedBook.title}".`, "book");
   };
 
   const deleteBook = (bookId) => {
     const book = books.find(b => b.id === bookId);
     setBooks(prev => prev.filter(b => b.id !== bookId));
-    // Cancel associated pending reservations
     setReservations(prev => prev.filter(r => !(r.bookId === bookId && r.status === 'pending')));
-    logEvent(`Book "${book ? book.title : bookId}" deleted from active database.`, "book");
+    logEvent(`Book "${book ? book.title : bookId}" deleted from inventory.`, "book");
   };
 
   // User management
@@ -308,13 +313,12 @@ export const LibraryProvider = ({ children }) => {
     };
     setUsers(prev => [...prev, newUser]);
     
-    // Seed session for new user
     setSessions(prev => ({
       ...prev,
       [newUser.id]: { login: 'Never', logout: 'Never' }
     }));
 
-    logEvent(`Registered new user profile "${newUser.name}" (Access role: ${newUser.role}).`, "user");
+    logEvent(`Created user profile "${newUser.name}" (Role: ${newUser.role}).`, "user");
   };
 
   const updateUser = (updatedUser) => {
@@ -324,18 +328,17 @@ export const LibraryProvider = ({ children }) => {
       setCurrentUser(updatedUser);
     }
     
-    // Log suspension changes
     if (prevUser && prevUser.status !== updatedUser.status) {
-      logEvent(`User Access for "${updatedUser.name}" toggled to "${updatedUser.status.toUpperCase()}".`, "security");
+      logEvent(`Access status for "${updatedUser.name}" changed to "${updatedUser.status.toUpperCase()}".`, "security");
     } else {
-      logEvent(`User profile for "${updatedUser.name}" details updated.`, "user");
+      logEvent(`User profile for "${updatedUser.name}" updated.`, "user");
     }
   };
 
   const deleteUser = (userId) => {
     const user = users.find(u => u.id === userId);
     setUsers(prev => prev.filter(u => u.id !== userId));
-    logEvent(`Revoked credentials and deleted account for "${user ? user.name : userId}".`, "user");
+    logEvent(`User account deleted for "${user ? user.name : userId}".`, "user");
   };
 
   // Settings
@@ -345,8 +348,8 @@ export const LibraryProvider = ({ children }) => {
       maxBooksAllowed: parseInt(newSettings.maxBooksAllowed) || 1,
       borrowPeriodDays: parseInt(newSettings.borrowPeriodDays) || 1
     });
-    logEvent(`Lending policies updated: Fine Rate=$${parseFloat(newSettings.fineRatePerDay).toFixed(2)}/day, Max Limits=${newSettings.maxBooksAllowed} Books, Lending Window=${newSettings.borrowPeriodDays} Days.`, "settings");
-    addNotification(`Library lending duration rules modified. Check Dashboard for details.`, 'student');
+    logEvent(`Circulation policies updated: Fine Rate=₹${parseFloat(newSettings.fineRatePerDay).toFixed(2)}/day, Max Limit=${newSettings.maxBooksAllowed} Books, Lending Duration=${newSettings.borrowPeriodDays} Days.`, "settings");
+    addNotification(`Library lending duration rules modified. Check Dashboard for details.`, 'student', 'system', 'student-dashboard');
   };
 
   // Issue / Return logic
@@ -355,17 +358,16 @@ export const LibraryProvider = ({ children }) => {
     const book = books.find(b => b.id === bookId);
 
     if (!student || student.status !== 'active') {
-      throw new Error("Student is not active or suspended.");
+      throw new Error("Student account is not active or is suspended.");
     }
 
     if (!book || book.copiesAvailable <= 0) {
-      throw new Error("Book is currently unavailable.");
+      throw new Error("Book is currently unavailable in stock.");
     }
 
-    // Check borrow limit
     const activeBorrows = transactions.filter(t => t.studentId === studentId && !t.returnDate).length;
     if (activeBorrows >= settings.maxBooksAllowed) {
-      throw new Error(`Student has already reached the limit of ${settings.maxBooksAllowed} books.`);
+      throw new Error(`Student has reached maximum lending limit of ${settings.maxBooksAllowed} books.`);
     }
 
     const today = new Date().toISOString().split('T')[0];
@@ -391,10 +393,9 @@ export const LibraryProvider = ({ children }) => {
 
     setTransactions(prev => [newTx, ...prev]);
     setBooks(prev => prev.map(b => b.id === bookId ? { ...b, copiesAvailable: b.copiesAvailable - 1 } : b));
-    logEvent(`Checked out and issued "${book.title}" to student "${student.name}" (Deadline: ${dueDateString}).`, "issue");
+    logEvent(`Issued "${book.title}" to student "${student.name}" (Due: ${dueDateString}).`, "issue");
     
-    // Notify student
-    addNotification(`You have checked out "${book.title}". Return deadline is ${dueDateString}.`, 'student');
+    addNotification(`🔔 Your book "${book.title}" is checked out. Return due date is ${dueDateString}.`, 'student', 'due', 'student-dashboard');
   };
 
   const returnBook = (transactionId, customReturnDate = null) => {
@@ -420,10 +421,11 @@ export const LibraryProvider = ({ children }) => {
     } : t));
 
     setBooks(prev => prev.map(b => b.id === tx.bookId ? { ...b, copiesAvailable: Math.min(b.totalCopies, b.copiesAvailable + 1) } : b));
-    logEvent(`Checked in "${tx.bookTitle}" from student "${tx.studentName}". Fine charged: $${fine.toFixed(2)}.`, "return");
+    logEvent(`Checked in "${tx.bookTitle}" from "${tx.studentName}". Fine assessed: ₹${fine.toFixed(2)}.`, "return");
 
     if (fine > 0) {
-      addNotification(`Overdue check-in: "${tx.bookTitle}" has fine of $${fine.toFixed(2)} pending.`, 'admin');
+      addNotification(`⚠️ You have ₹${fine.toFixed(2)} pending fine for overdue return of "${tx.bookTitle}".`, 'student', 'fine', 'student-fines');
+      addNotification(`Overdue return: "${tx.bookTitle}" has pending fine of ₹${fine.toFixed(2)}.`, 'admin', 'fine', 'admin-dashboard');
     }
   };
 
@@ -450,40 +452,41 @@ export const LibraryProvider = ({ children }) => {
     setTransactions(prev => prev.map(t => t.id === transactionId ? {
       ...t,
       fineAmount: 0,
-      status: t.returnDate ? "returned" : "issued" // Clear the fine
+      status: t.returnDate ? "returned" : "issued"
     } : t));
 
-    logEvent(`Collected fine payment of $${amount.toFixed(2)} from student "${tx.studentName}".`, "payment");
-    addNotification(`Collected fine payment of $${amount.toFixed(2)} from ${tx.studentName}.`, 'admin');
+    logEvent(`Received fine payment of ₹${amount.toFixed(2)} from "${tx.studentName}".`, "payment");
+    addNotification(`Fine payment of ₹${amount.toFixed(2)} received from ${tx.studentName}.`, 'admin', 'system', 'admin-dashboard');
   };
 
-  // Book loan extension (Renew)
+  // Renew Loan
   const renewLoan = (transactionId) => {
     const tx = transactions.find(t => t.id === transactionId);
     if (!tx || tx.returnDate) return;
 
     const currentDue = new Date(tx.dueDate);
-    currentDue.setDate(currentDue.getDate() + 7); // extend 7 days
+    currentDue.setDate(currentDue.getDate() + 7);
     const nextDueString = currentDue.toISOString().split('T')[0];
 
     setTransactions(prev => prev.map(t => t.id === transactionId ? {
       ...t,
       dueDate: nextDueString,
-      status: "issued" // clear overdue status on renewal
+      status: "issued"
     } : t));
 
-    logEvent(`Lending duration for "${tx.bookTitle}" (Student: ${tx.studentName}) extended by 7 days to ${nextDueString}.`, "settings");
+    logEvent(`Renewed loan for "${tx.bookTitle}" (Student: ${tx.studentName}) by 7 days to ${nextDueString}.`, "settings");
+    addNotification(`Loan renewed for "${tx.bookTitle}". New due date: ${nextDueString}.`, 'student', 'due', 'student-dashboard');
   };
 
-  // Send email notice reminder
   const sendOverdueReminder = (transactionId) => {
     const tx = transactions.find(t => t.id === transactionId);
     if (!tx) return;
 
-    logEvent(`Dispatched automated overdue email notice to student "${tx.studentName}" (<${tx.studentName.toLowerCase().replace(' ', '.')}@library.edu>) for overdue item "${tx.bookTitle}".`, "security");
+    logEvent(`Dispatched overdue alert email to "${tx.studentName}" (<${tx.studentName.toLowerCase().replace(/\s+/g, '.')}@library.edu>) for "${tx.bookTitle}".`, "security");
+    addNotification(`⚠️ Reminder: Your loan for "${tx.bookTitle}" is overdue. Please return immediately.`, 'student', 'due', 'student-dashboard');
   };
 
-  // Star Ratings and Book Reviews
+  // Star Ratings and Reviews
   const addBookReview = (bookId, studentName, ratingCount, reviewText) => {
     setBooks(prev => prev.map(b => {
       if (b.id === bookId) {
@@ -508,10 +511,10 @@ export const LibraryProvider = ({ children }) => {
     }));
 
     const book = books.find(b => b.id === bookId);
-    logEvent(`Student "${studentName}" submitted a ${ratingCount}-star review for title "${book ? book.title : bookId}".`, "info");
+    logEvent(`Student "${studentName}" submitted a ${ratingCount}-star review for "${book ? book.title : bookId}".`, "info");
   };
 
-  // Toggle book wishlist bookmark
+  // Toggle Wishlist Bookmark
   const toggleWishlist = (studentId, bookId) => {
     setBooks(prev => prev.map(b => {
       if (b.id === bookId) {
@@ -547,8 +550,8 @@ export const LibraryProvider = ({ children }) => {
     };
 
     setReservations(prev => [newRes, ...prev]);
-    logEvent(`Student "${student.name}" placed a hold reservation for title "${book.title}".`, "reservation");
-    addNotification(`Student ${student.name} requested reservation for "${book.title}".`, 'librarian');
+    logEvent(`Student "${student.name}" placed a hold reservation for "${book.title}".`, "reservation");
+    addNotification(`Student ${student.name} placed a reservation hold for "${book.title}".`, 'librarian', 'reservation', 'lib-reservations');
   };
 
   const updateReservationStatus = (reservationId, status) => {
@@ -560,16 +563,16 @@ export const LibraryProvider = ({ children }) => {
       const student = users.find(u => u.id === res.studentId);
 
       if (!student || student.status !== 'active') {
-        throw new Error("Student is not active or is suspended.");
+        throw new Error("Student account is not active or is suspended.");
       }
 
       if (!book || book.copiesAvailable <= 0) {
-        throw new Error("Book is out of stock.");
+        throw new Error("Book is currently out of stock.");
       }
 
       const activeBorrows = transactions.filter(t => t.studentId === res.studentId && !t.returnDate).length;
       if (activeBorrows >= settings.maxBooksAllowed) {
-        throw new Error(`Student has already reached the lending limit of ${settings.maxBooksAllowed} books.`);
+        throw new Error(`Student has reached lending limit of ${settings.maxBooksAllowed} books.`);
       }
 
       const due = new Date();
@@ -577,11 +580,95 @@ export const LibraryProvider = ({ children }) => {
       const dueDateString = due.toISOString().split('T')[0];
 
       issueBook(res.studentId, res.bookId, dueDateString);
+      addNotification(`📚 Your reserved book "${res.bookTitle}" is now available and checked out!`, 'student', 'reservation', 'student-dashboard');
     }
 
     setReservations(prev => prev.map(r => r.id === reservationId ? { ...r, status } : r));
-    logEvent(`Hold request for "${res.bookTitle}" by student "${res.studentName}" was ${status.toUpperCase()} by librarian.`, "reservation");
+    logEvent(`Reservation hold for "${res.bookTitle}" by "${res.studentName}" marked as ${status.toUpperCase()}.`, "reservation");
   };
+
+  // ⭐ Priority 4: Smart Book Recommendations Engine
+  const getSmartRecommendations = useCallback((studentId) => {
+    const targetStudentId = studentId || currentUser?.id;
+    if (!books || books.length === 0) return [];
+
+    // Gather student history & signals
+    const studentTxs = transactions.filter(t => t.studentId === targetStudentId);
+    const borrowedBookIds = new Set(studentTxs.map(t => t.bookId));
+    
+    // Category frequencies from borrowed books
+    const categoryScores = {};
+    studentTxs.forEach(t => {
+      const b = books.find(bk => bk.id === t.bookId);
+      if (b) {
+        categoryScores[b.category] = (categoryScores[b.category] || 0) + 3;
+      }
+    });
+
+    // Wishlist signals
+    const wishlistedBooks = books.filter(b => b.wishlist && b.wishlist.includes(targetStudentId));
+    wishlistedBooks.forEach(b => {
+      categoryScores[b.category] = (categoryScores[b.category] || 0) + 2;
+    });
+
+    // Top categories with fallback
+    const topCategories = Object.keys(categoryScores).sort((a, b) => categoryScores[b] - categoryScores[a]);
+    const favoriteCategory = topCategories.length > 0 ? topCategories[0] : 'Programming';
+
+    // Score all available/catalog books
+    const scoredBooks = books.map(book => {
+      let score = 50; // base score
+      let reasons = [];
+
+      // Category affinity
+      if (categoryScores[book.category]) {
+        score += Math.min(30, categoryScores[book.category] * 8);
+        reasons.push(`Because you like ${book.category}`);
+      } else if (book.category === 'Programming' || book.category === 'Computer Science') {
+        score += 15;
+        reasons.push(`Trending in ${book.category}`);
+      }
+
+      // Rating bonus
+      if (book.rating >= 4.8) {
+        score += 20;
+        reasons.push(`Top Rated (${book.rating} ⭐)`);
+      } else if (book.rating >= 4.5) {
+        score += 10;
+      }
+
+      // Availability bonus
+      if (book.copiesAvailable > 0) {
+        score += 8;
+      } else {
+        score -= 5;
+      }
+
+      // If already borrowed, lower priority slightly
+      if (borrowedBookIds.has(book.id)) {
+        score -= 15;
+      }
+
+      // Wishlist signal
+      if (book.wishlist && book.wishlist.includes(targetStudentId)) {
+        score += 15;
+        reasons.unshift("In your Bookmarks");
+      }
+
+      const matchPercentage = Math.min(99, Math.max(75, Math.round(score)));
+      const primaryReason = reasons.length > 0 ? reasons[0] : `Popular in ${book.category}`;
+
+      return {
+        ...book,
+        matchPercentage,
+        recommendationReason: primaryReason,
+        isWishlisted: book.wishlist && book.wishlist.includes(targetStudentId)
+      };
+    });
+
+    // Sort by match score descending
+    return scoredBooks.sort((a, b) => b.matchPercentage - a.matchPercentage);
+  }, [books, transactions, currentUser]);
 
   return (
     <LibraryContext.Provider value={{
@@ -613,8 +700,12 @@ export const LibraryProvider = ({ children }) => {
       requestReservation,
       updateReservationStatus,
       clearSystemLogs,
+      addNotification,
       markNotificationRead,
-      clearNotifications
+      markAllNotificationsRead,
+      deleteNotification,
+      clearNotifications,
+      getSmartRecommendations
     }}>
       {children}
     </LibraryContext.Provider>

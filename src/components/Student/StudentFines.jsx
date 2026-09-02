@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { LibraryContext } from '../../context/LibraryContext';
 import { Modal } from '../Shared/Modal';
-import { DollarSign, CheckCircle2, AlertTriangle, ShieldCheck, History } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, ShieldCheck, History } from 'lucide-react';
 
 export const StudentFines = () => {
   const { currentUser, transactions, payFine, updateUser, paymentRecords } = useContext(LibraryContext);
@@ -14,12 +14,12 @@ export const StudentFines = () => {
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvv, setCardCvv] = useState('');
 
-  const studentTxs = transactions.filter(t => t.studentId === currentUser.id);
+  const studentTxs = (transactions || []).filter(t => t.studentId === currentUser?.id);
   const unpaidTxs = studentTxs.filter(t => t.fineAmount > 0);
   const totalFine = unpaidTxs.reduce((sum, tx) => sum + tx.fineAmount, 0);
 
   // Student specific payment history
-  const studentPayments = paymentRecords.filter(p => p.studentId === currentUser.id);
+  const studentPayments = (paymentRecords || []).filter(p => p.studentId === currentUser?.id);
 
   const handleOpenPayModal = (tx) => {
     setSelectedTx(tx);
@@ -31,7 +31,6 @@ export const StudentFines = () => {
     e.preventDefault();
     if (!cardNumber || !cardExpiry || !cardCvv) return;
 
-    // Simulate payment process
     setTimeout(() => {
       if (selectedTx === 'all') {
         unpaidTxs.forEach(tx => payFine(tx.id));
@@ -39,9 +38,9 @@ export const StudentFines = () => {
         payFine(selectedTx.id);
       }
 
-      // Check if student status should be reactivated
+      // Reactivate student status if suspended
       const updatedFines = selectedTx === 'all' ? 0 : totalFine - selectedTx.fineAmount;
-      if (updatedFines === 0 && currentUser.status === 'suspended') {
+      if (updatedFines === 0 && currentUser?.status === 'suspended') {
         updateUser({
           ...currentUser,
           status: 'active'
@@ -63,7 +62,7 @@ export const StudentFines = () => {
     <div className="animate-fade-in">
       <div style={{ marginBottom: '2rem' }}>
         <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>Fines & Payments</h1>
-        <p style={{ color: 'var(--text-secondary)' }}>View outstanding library fines and complete mock credit card checkout.</p>
+        <p style={{ color: 'var(--text-secondary)' }}>View outstanding library fines and complete mock UPI / Card checkout.</p>
       </div>
 
       {/* Tabs */}
@@ -72,7 +71,7 @@ export const StudentFines = () => {
           className={`tab-btn ${finesTab === 'unpaid' ? 'active' : ''}`}
           onClick={() => setFinesTab('unpaid')}
         >
-          Outstanding Fines (${totalFine.toFixed(2)})
+          Outstanding Fines (₹{totalFine.toFixed(2)})
         </button>
         <button 
           className={`tab-btn ${finesTab === 'history' ? 'active' : ''}`}
@@ -88,7 +87,7 @@ export const StudentFines = () => {
           <div>
             <div className="glass-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'between', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                   <span style={{ fontSize: '0.85rem', fontWeight: 600, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Balance Due</span>
                   <span className={`badge ${totalFine > 0 ? 'red' : 'green'}`} style={{ marginLeft: 'auto' }}>
                     {totalFine > 0 ? 'Outstanding' : 'No Fines'}
@@ -96,7 +95,7 @@ export const StudentFines = () => {
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', marginBottom: '1rem' }}>
-                  <span style={{ fontSize: '1.5rem', fontWeight: 500, color: 'var(--text-muted)' }}>$</span>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-muted)' }}>₹</span>
                   <span style={{ fontSize: '3rem', fontWeight: 800, color: totalFine > 0 ? 'var(--accent-red)' : 'var(--accent-green)' }}>
                     {totalFine.toFixed(2)}
                   </span>
@@ -116,7 +115,7 @@ export const StudentFines = () => {
                   style={{ width: '100%' }}
                   onClick={() => handleOpenPayModal('all')}
                 >
-                  <DollarSign size={18} /> Pay Total Balance
+                  Pay Total Balance (₹{totalFine.toFixed(2)})
                 </button>
               )}
             </div>
@@ -156,7 +155,7 @@ export const StudentFines = () => {
                           <td style={{ fontWeight: 600 }}>{tx.bookTitle}</td>
                           <td>{tx.dueDate}</td>
                           <td style={{ color: 'var(--accent-red)' }}>{diffDays} days</td>
-                          <td style={{ fontWeight: 600, color: 'var(--accent-red)' }}>${tx.fineAmount.toFixed(2)}</td>
+                          <td style={{ fontWeight: 600, color: 'var(--accent-red)' }}>₹{tx.fineAmount.toFixed(2)}</td>
                           <td>
                             <button 
                               className="btn-premium primary" 
@@ -204,10 +203,10 @@ export const StudentFines = () => {
                       <td><code>{pay.id.substring(4, 12)}</code></td>
                       <td style={{ fontWeight: 600 }}>{pay.bookTitle}</td>
                       <td>{pay.date}</td>
-                      <td style={{ fontWeight: 700, color: 'var(--accent-green)' }}>${pay.amountPaid.toFixed(2)}</td>
+                      <td style={{ fontWeight: 700, color: 'var(--accent-green)' }}>₹{pay.amountPaid.toFixed(2)}</td>
                       <td>
                         <span className="badge green" style={{ fontSize: '0.65rem' }}>
-                          CC_APPROVED
+                          PAID_SUCCESS
                         </span>
                       </td>
                     </tr>
@@ -241,22 +240,22 @@ export const StudentFines = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1rem', fontWeight: 700 }}>
                 <span>Amount:</span>
                 <span style={{ color: 'var(--accent-red)' }}>
-                  ${selectedTx === 'all' ? totalFine.toFixed(2) : selectedTx?.fineAmount.toFixed(2)}
+                  ₹{selectedTx === 'all' ? totalFine.toFixed(2) : selectedTx?.fineAmount.toFixed(2)}
                 </span>
               </div>
             </div>
 
             <div className="form-group">
-              <label className="form-label">Cardholder Name</label>
-              <input type="text" className="glass-input" defaultValue={currentUser.name} required />
+              <label className="form-label">Payer Name</label>
+              <input type="text" className="glass-input" defaultValue={currentUser?.name} required />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Card Number</label>
+              <label className="form-label">Card / UPI ID</label>
               <input 
                 type="text" 
                 className="glass-input" 
-                placeholder="4111 2222 3333 4444" 
+                placeholder="e.g. 4111 2222 3333 4444 or user@upi" 
                 value={cardNumber} 
                 onChange={(e) => setCardNumber(e.target.value)} 
                 required 
@@ -276,12 +275,12 @@ export const StudentFines = () => {
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">CVV</label>
+                <label className="form-label">CVV / PIN</label>
                 <input 
                   type="password" 
                   className="glass-input" 
                   placeholder="123" 
-                  maxLength={3}
+                  maxLength={4}
                   value={cardCvv} 
                   onChange={(e) => setCardCvv(e.target.value)} 
                   required 
@@ -291,7 +290,7 @@ export const StudentFines = () => {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '0.5rem', marginBottom: '1.5rem' }}>
               <ShieldCheck size={14} style={{ color: 'var(--accent-green)' }} />
-              <span>Simulated Payment Gateway. No real funds are transferred.</span>
+              <span>Simulated Payment Gateway. No real money is charged.</span>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
@@ -299,7 +298,7 @@ export const StudentFines = () => {
                 Cancel
               </button>
               <button type="submit" className="btn-premium primary">
-                Submit Payment
+                Confirm Payment (₹{selectedTx === 'all' ? totalFine.toFixed(2) : selectedTx?.fineAmount.toFixed(2)})
               </button>
             </div>
           </form>

@@ -80,7 +80,7 @@ export const UserManagement = () => {
       <div className="flex-between" style={{ marginBottom: '2rem' }}>
         <div>
           <h1 className="gradient-text" style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>User Directory</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Manage library access permissions, update profiles, and suspend/reactivate student accounts.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>Manage library access permissions, update profiles, and suspend/reactivate accounts.</p>
         </div>
 
         <button className="btn-premium primary" onClick={handleOpenAdd}>
@@ -90,7 +90,7 @@ export const UserManagement = () => {
 
       {/* Users directory table */}
       <div className="glass-card">
-        {users.length === 0 ? (
+        {(users || []).length === 0 ? (
           <div className="empty-state">
             <Users size={48} className="empty-state-icon" />
             <h3 className="empty-state-title">Directory is empty</h3>
@@ -113,13 +113,14 @@ export const UserManagement = () => {
                 {users.map(user => {
                   const idToShow = user.role === 'student' ? user.enrollmentId : user.employeeId;
                   const isSuspended = user.status === 'suspended';
+                  const initials = (user.name || 'U').substring(0, 2).toUpperCase();
                   
                   return (
                     <tr key={user.id}>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                           <div className="sidebar-avatar" style={{ width: '32px', height: '32px', fontSize: '0.8rem' }}>
-                            {user.name.split(' ').map(n => n[0]).join('')}
+                            {initials}
                           </div>
                           <span style={{ fontWeight: 600 }}>{user.name}</span>
                         </div>
@@ -190,7 +191,7 @@ export const UserManagement = () => {
             <input 
               type="text" 
               className="glass-input" 
-              placeholder="e.g. Tony Stark" 
+              placeholder="e.g. Patron Name" 
               value={name} 
               onChange={(e) => setName(e.target.value)} 
               required 
@@ -202,7 +203,7 @@ export const UserManagement = () => {
             <input 
               type="email" 
               className="glass-input" 
-              placeholder="e.g. tony@stark.com" 
+              placeholder="e.g. user@library.edu" 
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
               required 

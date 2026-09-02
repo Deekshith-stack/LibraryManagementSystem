@@ -1,10 +1,10 @@
 <div align="center">
 
-# 📚 Modern Library Management System
+# 📚 Modern Library Management System (LMS)
 
 ### A Smart, Professional & Feature-Rich Digital Library Platform
 
-<img src="https://readme-typing-svg.demolab.com?font=Inter&weight=700&size=26&duration=3500&pause=1000&color=6C63FF&center=true&vCenter=true&width=750&lines=Smart+Library+Management+System;Student+%7C+Librarian+%7C+Admin+Portals;Built+with+React+and+Vite;Modern+UI+%E2%80%A2+Smart+Features+%E2%80%A2+Responsive+Design" alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Inter&weight=700&size=26&duration=3500&pause=1000&color=6C63FF&center=true&vCenter=true&width=750&lines=Smart+Library+Management+System;AI+Book+Recommendations;Notification+Center+%E2%80%A2+Collapsible+Sidebar;Student+%7C+Librarian+%7C+Admin+Portals;Built+with+React+19+and+Vite" alt="Typing SVG" />
 
 <br/><br/>
 
@@ -26,522 +26,237 @@
 
 <br/><br/>
 
-> **A modern and intelligent Library Management System designed with professional dashboards, role-based portals, automated workflows, and smart library features.**
+> **An end-to-end, feature-packed, and responsive Library Management System built with React 19, Vite, and Lucide React. Designed with a modern glassmorphic dark aesthetic, role-based access control (RBAC), AI-personalized smart book recommendations, a multi-category notification center, collapsible sidebar navigation, and automated overdue fine calculations in Indian Rupees (₹).**
 
 </div>
 
 ---
 
-## 🌐 Live Demo
+## 🌐 Live Application & Links
 
-<div align="center">
-
-### 🚀 Experience the Application
-
-[![Open Live Demo](https://img.shields.io/badge/OPEN-LIVE%20APPLICATION-22C55E?style=for-the-badge\&logo=google-chrome\&logoColor=white)](https://deekshith-stack.github.io/LibraryManagementSystem/)
-
-**🔗 https://deekshith-stack.github.io/LibraryManagementSystem/**
-
-</div>
+- 🚀 **Live Demo:** [https://deekshith-stack.github.io/LibraryManagementSystem/](https://deekshith-stack.github.io/LibraryManagementSystem/)
+- 📂 **GitHub Repository:** [https://github.com/Deekshith-stack/LibraryManagementSystem](https://github.com/Deekshith-stack/LibraryManagementSystem)
 
 ---
 
+## 🌟 Key Highlights & New Features
 
-# ✨ Project Overview
-
-The **Modern Library Management System (LMS)** is a professional and responsive web application designed to simplify and modernize library operations.
-
-The system provides dedicated portals for:
-
-<div align="center">
-
-|     🎓 Student     |     📖 Librarian    |  ⚙️ Administrator |
-| :----------------: | :-----------------: | :---------------: |
-|  Browse & Reserve  |     Manage Books    |  Complete Control |
-|     Track Loans    |    Issue & Return   |     Analytics     |
-|      Pay Fines     | Manage Transactions |  User Management  |
-| Reviews & Wishlist |  Reservation Queue  | Settings & Backup |
-
-</div>
+- **⭐ Smart Book Recommendations:** Intelligent scoring engine that personalizes book suggestions for user **"a"** based on borrowed categories, reading history, wishlist bookmarks, and reader ratings, complete with match percentages (`98% Match`) and contextual reasons (*"Because you read Clean Code"*, *"Top Rated in Programming"*).
+- **⭐ Interactive Notification Center:** Dedicated notification hub and navbar dropdown providing real-time alerts:
+  - 🔔 *"Your book is due tomorrow."*
+  - ⚠️ *"You have ₹40 pending fine."*
+  - 📚 *"Your reserved book is now available."*
+  - 🎉 *"New books added in Programming."*
+- **🎛️ Hide & Unhide Sidebar:** Smooth collapsible sidebar with desktop icon-rail mode, mobile drawer slide-out, and instant navbar toggle buttons.
+- **✨ Fresh Starter Architecture:** Zeroed legacy mock data; launches straight into student profile **"a"** with clean circulation logs, curated books in Programming/CS/AI, and automated ₹ Indian Rupee pricing.
+- **🛡️ Role-Based Access Control (RBAC):** Switch seamlessly between **Student**, **Librarian**, and **Admin** perspectives from the top navigation bar.
+- **💰 Automated Fine Engine:** Real-time calculation of late fees (default: `₹5.00/day`) and integrated simulated payment checkout.
+- **💾 Local Persistence:** Browser-backed state synchronization (`localStorage`) preserving custom books, transactions, logs, and settings across refreshes.
 
 ---
 
-# 🌟 Key Highlights
-
-<div align="center">
-
-|               🔐 RBAC              |        📚 Smart Catalog       |         💰 Auto Fines         |
-| :--------------------------------: | :---------------------------: | :---------------------------: |
-| Student, Librarian & Admin portals | Advanced search and filtering | Automatic overdue calculation |
-
-|      📌 Reservations      |  🔔 Notifications | 💾 Local Persistence |
-| :-----------------------: | :---------------: | :------------------: |
-| Reserve unavailable books | Role-based alerts | Browser LocalStorage |
-
-|         📊 Analytics         |       📥 Export      |             🎨 Modern UI            |
-| :--------------------------: | :------------------: | :---------------------------------: |
-| Smart dashboards and metrics | CSV and JSON reports | Glassmorphism and responsive design |
-
-</div>
-
----
-
-# 🏛️ System Architecture
+## 🏛️ System Architecture & Role Portals
 
 ```mermaid
 graph TD
-
-    A[React Application] --> B[Library Context]
-    B --> C[LocalStorage]
-
-    B --> D[Student Portal]
-    B --> E[Librarian Portal]
-    B --> F[Admin Portal]
-
-    D --> D1[Dashboard]
-    D --> D2[Book Catalog]
-    D --> D3[Fines & Payments]
-
-    E --> E1[Book Management]
-    E --> E2[Issue & Return]
-    E --> E3[Reservations]
-
-    F --> F1[Analytics]
-    F --> F2[User Management]
-    F --> F3[Settings & Backup]
+    App[Main App & Router State] --> LP[LibraryProvider - React Context]
+    LP --> Storage[(Browser LocalStorage)]
+    
+    LP --> Nav[Navbar - Role Switcher & Notification Dropdown]
+    LP --> Side[Collapsible Sidebar - Dynamic Tab Navigation]
+    
+    LP --> SP[Student Portal]
+    LP --> LIB[Librarian Portal]
+    LP --> ADM[Admin Portal]
+    
+    SP --> S1[Student Dashboard]
+    SP --> S2[Smart AI Recommendations]
+    SP --> S3[Library Catalog & Wishlist]
+    SP --> S4[Fines & UPI/Card Payments]
+    
+    LIB --> L1[Book Inventory Management]
+    LIB --> L2[Issue & Return Desk]
+    LIB --> L3[Reservation Requests Queue]
+    
+    ADM --> A1[Analytics & Volume Dashboard]
+    ADM --> A2[User Management & RBAC]
+    ADM --> A3[System Settings & CSV Data Export]
 ```
 
 ---
 
-# 🎓 Student Portal
+### 1. 🎓 Student Portal & Recommendations
 
-The Student Portal provides a complete digital library experience.
+Designed for students to explore, borrow, reserve, and review books with ease:
 
-## Features
-
-* 📊 Personalized Dashboard
-* 🔎 Smart Book Search
-* 🏷️ Advanced Filters
-* 📚 Book Borrowing History
-* ⏳ Due Date Tracking
-* ⚠️ Overdue Alerts
-* 📌 Book Reservations
-* ❤️ Wishlist Management
-* ⭐ Book Ratings & Reviews
-* 💰 Fine Tracking
-* 🧾 Payment Receipts
-* 🔔 Personalized Notifications
-
-### Student Experience
-
-```text
-Discover Books
-      ↓
-Search & Filter
-      ↓
-View Availability
-      ↓
-Reserve / Borrow
-      ↓
-Track Due Date
-      ↓
-Return Book
-```
+- **AI Smart Recommendations:**
+  - Dynamic match percentage score (`98% Match`, `95% Match`).
+  - Contextual recommendation tags (*"Because you like Programming"*, *"Top Rated in Computer Science"*, *"In your Bookmarks"*).
+  - One-click book reservation and wishlist bookmarking.
+- **Personalized Dashboard:**
+  - Active borrowed books with countdowns to return due dates.
+  - Overdue warning badges and status indicators.
+  - Personal reservation queue with pending/approved status.
+  - Quick statistics (Active Loans, Top Category, Overdue Items, Outstanding Fines in ₹).
+- **Search & Filter Catalog:**
+  - Real-time instant search by title, author, category, or ISBN.
+  - Filter by category (Programming, Computer Science, Artificial Intelligence, Software Engineering, Business, etc.) and availability.
+  - Wishlist management and star ratings with reader reviews.
+- **Fines & Payments:**
+  - Itemized breakdown of overdue fees in Indian Rupees (₹).
+  - Simulated online payment checkout with receipt generation.
 
 ---
 
-# 📖 Librarian Portal
+### 2. 🔔 Notification Center
 
-The Librarian Portal provides complete control over daily library operations.
-
-## Features
-
-* ➕ Add Books
-* ✏️ Edit Book Information
-* 🗑️ Remove Books
-* 📦 Manage Book Copies
-* 📍 Shelf Location Management
-* 📤 Issue Books
-* 📥 Return Books
-* ⏰ Automatic Due Dates
-* 💰 Automatic Fine Calculation
-* 📋 Transaction Management
-* 📌 Reservation Processing
+- **Navbar Dropdown & Modal Hub:**
+  - Unread notification badge counter with pulse animations.
+  - Category filters: `All`, `Unread`, `🔔 Due Dates`, `⚠️ Fines`, `📚 Holds`, `🎉 New Books`.
+  - One-click action navigation (e.g. clicking a fine alert navigates directly to the Fines payment tab).
+  - "Mark All Read", "Dismiss", and "Clear All" controls.
 
 ---
 
-## 📤 Book Issue Workflow
+### 3. 📖 Librarian Portal
 
-```text
-┌──────────────────────┐
-│   Select Student     │
-└──────────┬───────────┘
-           ↓
-┌──────────────────────┐
-│    Select Book       │
-└──────────┬───────────┘
-           ↓
-┌──────────────────────┐
-│ Check Availability   │
-└──────────┬───────────┘
-           ↓
-┌──────────────────────┐
-│     Issue Book       │
-└──────────┬───────────┘
-           ↓
-┌──────────────────────┐
-│ Generate Due Date    │
-└──────────────────────┘
-```
+Empowers librarians with full control over physical book inventory and lending operations:
+
+- **Book Catalog Management:**
+  - Add new books with ISBN, category, price (₹), total copies, cover image upload, and shelf locations.
+  - Edit metadata or increase/decrease available stock.
+  - Remove deprecated books from the circulation database.
+- **Issue & Return Operations Desk:**
+  - Check out books to active students with automated due date calculation (default: 14 days).
+  - Return processing with automated overdue fine evaluation in ₹.
+  - Extend loans by 7 days with the "Renew" feature.
+  - Send overdue email reminder notices.
+- **Reservation Processing Queue:**
+  - View all student hold requests in real time.
+  - Approve reservations when copies become available.
 
 ---
 
-# ⚙️ Admin Portal
+### 4. ⚙️ Admin Portal
 
-The Admin Portal provides complete visibility and control over the entire Library Management System.
+Provides system administrators with complete visibility, user control, and system configuration:
 
-## Features
-
-* 📊 Analytics Dashboard
-* 👥 User Management
-* 🎓 Student Management
-* 📖 Librarian Management
-* 🔐 Role-Based Access Control
-* 🚫 Account Suspension
-* 📚 Inventory Monitoring
-* ⚠️ Overdue Monitoring
-* 💰 Fine Tracking
-* 📄 Activity Logs
-* 📥 Data Export
-* 💾 System Backup
-* ♻️ Data Restore
-* 🗑️ Factory Reset
+- **Executive Analytics Dashboard:**
+  - Live metric KPI cards: Catalog Volume, Registered Patrons, Active Loans, Collected Fines (₹).
+  - Category distribution charts and popular books leaderboard.
+  - System activity & audit logs feed.
+  - Export capabilities: Download complete book inventory, patron database, and circulation logs as **CSV**.
+- **User Management (RBAC):**
+  - Add, edit, or delete users across all roles (`Student`, `Librarian`, `Admin`).
+  - Assign Student Enrollment IDs (`STU-2026-XXX`) or Employee IDs (`LIB-2026-XXX`, `ADM-2026-XXX`).
+  - Toggle user account status between `Active` and `Suspended`.
+- **System Settings:**
+  - Configure **Fine Rate per Day** (e.g., `₹5.00/day`).
+  - Configure **Borrow Period Limit** (e.g., `14 days`).
+  - Configure **Maximum Books Allowed per Student** (e.g., `4 books`).
 
 ---
 
-# 📊 Smart Analytics Dashboard
+### 5. 📱 Collapsible Sidebar
 
-The system provides real-time insights into library activity.
-
-```text
-╭────────────────────────────────────────────╮
-│              LIBRARY ANALYTICS             │
-├────────────────────────────────────────────┤
-│                                            │
-│   📚 Total Books             500+          │
-│   👥 Registered Users        1,200+        │
-│   📖 Active Loans            125           │
-│   ⚠️ Overdue Books           12            │
-│   💰 Fine Revenue            ₹2,500        │
-│                                            │
-╰────────────────────────────────────────────╯
-```
+- **Collapse / Expand Controls:** Easily toggle the sidebar into a space-saving compact rail on desktop or an off-canvas slide-out drawer on mobile screens.
+- Accessible via the navbar hamburger button and the sidebar chevron control.
 
 ---
 
-# 💰 Automated Fine Calculation
+## 🛠️ Tech Stack
 
-The system automatically calculates overdue fines.
-
-```text
-Issue Date:      10 August 2026
-Due Date:        24 August 2026
-Return Date:     28 August 2026
-
-Overdue Days:    4
-Fine Rate:       ₹10 / Day
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-Total Fine:      ₹40
-```
-
-The fine rate can be configured from the **Admin Settings Panel**.
+| Category | Technology | Description |
+|---|---|---|
+| **Core Framework** | [React 19](https://react.dev/) | Component architecture with hooks (`useState`, `useContext`, `useEffect`, `useMemo`, `useCallback`) |
+| **Build & Dev Tool** | [Vite 8](https://vitejs.dev/) | Ultra-fast HMR and optimized production bundling |
+| **Icons** | [Lucide React](https://lucide.dev/) | Modern, clean vector iconography |
+| **Styling** | Vanilla CSS3 | Custom design system with CSS variables, Glassmorphism, animations, and Grid/Flexbox |
+| **State Management** | React Context API | Centralized state in `LibraryContext` with `localStorage` synchronization |
+| **CI/CD & Hosting** | [GitHub Pages](https://pages.github.com/) & [GitHub Actions](https://github.com/features/actions) | Continuous deployment workflow |
 
 ---
 
-# 📌 Book Reservation System
-
-When a book is unavailable, students can request a reservation.
-
-```mermaid
-flowchart LR
-
-A[Book Unavailable]
-    --> B[Student Requests Reservation]
-    --> C[Reservation Added to Queue]
-    --> D[Book Becomes Available]
-    --> E[Librarian Approves Request]
-    --> F[Student Receives Notification]
-```
-
----
-
-# 🔔 Smart Notification System
-
-The application provides a centralized notification center.
-
-### Example Notifications
-
-```text
-📚 Your book has been issued successfully.
-
-⚠️ Your book is due tomorrow.
-
-📌 Your reserved book is now available.
-
-💰 You have a pending fine.
-
-📖 Your book has been returned successfully.
-```
-
----
-
-# 💾 Persistent Data Storage
-
-The frontend application currently uses **Browser LocalStorage** for data persistence.
-
-```text
-lms_books
-lms_users
-lms_transactions
-lms_reservations
-lms_settings
-lms_payment_records
-lms_notifications
-lms_system_logs
-```
-
-> 💡 The system can later be integrated with **Java Spring Boot + MySQL** to create a complete enterprise-level full-stack application.
-
----
-
-# 🛠️ Technology Stack
-
-<div align="center">
-
-| Technology           | Purpose                  |
-| -------------------- | ------------------------ |
-| ⚛️ React 19          | Frontend Framework       |
-| ⚡ Vite               | Development & Build Tool |
-| 🟨 JavaScript        | Application Logic        |
-| 🎨 Vanilla CSS       | Styling & Animations     |
-| 🔥 React Context API | State Management         |
-| 🗂️ LocalStorage     | Data Persistence         |
-| 🎯 Lucide React      | Modern Icons             |
-| 🚀 GitHub Pages      | Deployment               |
-
-</div>
-
----
-
-# 📁 Project Structure
+## 📁 Project Directory Structure
 
 ```text
 LibraryManagementSystem/
-│
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml
-│
+│       └── deploy.yml                      # Automated GitHub Actions workflow
 ├── public/
-│   ├── 404.html
-│   ├── favicon.svg
-│   └── icons.svg
-│
-├── assets/
-│   └── library-demo.gif
-│
+│   ├── favicon.svg                         # Application favicon
+│   └── icons.svg                           # SVG sprite definitions
 ├── src/
-│   │
 │   ├── components/
 │   │   ├── Admin/
-│   │   │   ├── Dashboard.jsx
-│   │   │   ├── LibrarySettings.jsx
-│   │   │   └── UserManagement.jsx
-│   │   │
+│   │   │   ├── Dashboard.jsx               # Admin metrics, analytics, audit log & CSV exports
+│   │   │   ├── LibrarySettings.jsx         # Policy settings & fine rate configuration (₹)
+│   │   │   └── UserManagement.jsx          # User CRUD, role assignments & status toggles
 │   │   ├── Librarian/
-│   │   │   ├── BookCatalog.jsx
-│   │   │   ├── IssueReturn.jsx
-│   │   │   └── Reservations.jsx
-│   │   │
+│   │   │   ├── BookCatalog.jsx             # Inventory management, add/edit/delete books
+│   │   │   ├── IssueReturn.jsx             # Checkout desk, return processor & renewals
+│   │   │   └── Reservations.jsx            # Student hold requests & approval queue
 │   │   ├── Shared/
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── Sidebar.jsx
-│   │   │   └── Modal.jsx
-│   │   │
+│   │   │   ├── Modal.jsx                   # Reusable glassmorphic popup modal
+│   │   │   ├── Navbar.jsx                  # Top navbar, role switcher & notification bell
+│   │   │   ├── NotificationCenterModal.jsx # Dedicated multi-category notification hub
+│   │   │   └── Sidebar.jsx                 # Collapsible responsive sidebar navigation
 │   │   └── Student/
-│   │       ├── StudentDashboard.jsx
-│   │       ├── StudentCatalog.jsx
-│   │       └── StudentFines.jsx
-│   │
+│   │       ├── SmartRecommendations.jsx    # AI personalized recommendations widget
+│   │       ├── StudentCatalog.jsx          # Book discovery, search, reviews & wishlist
+│   │       ├── StudentDashboard.jsx        # Student loans overview & active countdowns
+│   │       └── StudentFines.jsx            # Fine payment center & receipt generation (₹)
 │   ├── context/
-│   │   └── LibraryContext.jsx
-│   │
+│   │   └── LibraryContext.jsx              # Unified application state, recommendation engine & alerts
 │   ├── utils/
-│   │   └── mockData.js
-│   │
-│   ├── App.jsx
-│   └── main.jsx
-│
-├── README.md
-├── package.json
-└── vite.config.js
+│   │   └── mockData.js                     # Starter dataset for books, user 'a', settings & notifications
+│   ├── App.css                             # Layout utilities
+│   ├── App.jsx                             # Root shell and dynamic portal switcher
+│   ├── index.css                           # Design system, themes, animations & UI tokens
+│   └── main.jsx                            # React DOM entry point
+├── package.json                            # NPM dependencies and scripts
+├── README.md                               # Full project documentation
+└── vite.config.js                          # Vite configuration with base path setting
 ```
 
 ---
 
-# ⚡ Getting Started
+## ⚡ Installation & Local Setup
 
-## Prerequisites
+### Prerequisites
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
 
-Make sure you have installed:
+### Steps
 
-* Node.js `v18+`
-* npm `v9+`
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/Deekshith-stack/LibraryManagementSystem.git
+   cd LibraryManagementSystem
+   ```
 
----
+2. **Install Dependencies:**
+   ```bash
+   npm install
+   ```
 
-## 1️⃣ Clone the Repository
+3. **Start Development Server:**
+   ```bash
+   npm run dev
+   ```
+   Open your browser and navigate to:
+   ```text
+   http://localhost:5173/LibraryManagementSystem/
+   ```
 
-```bash
-git clone https://github.com/Deekshith-stack/LibraryManagementSystem.git
-```
-
-## 2️⃣ Navigate to the Project
-
-```bash
-cd LibraryManagementSystem
-```
-
-## 3️⃣ Install Dependencies
-
-```bash
-npm install
-```
-
-## 4️⃣ Start Development Server
-
-```bash
-npm run dev
-```
+4. **Production Build & Deploy:**
+   ```bash
+   npm run deploy
+   ```
 
 ---
 
-# 🏗️ Production Build
+## 📄 License
 
-Create an optimized production build:
-
-```bash
-npm run build
-```
-
-Preview the production build:
-
-```bash
-npm run preview
-```
-
----
-
-# 🚀 Deployment
-
-This project is deployed using **GitHub Pages**.
-
-<div align="center">
-
-### 🌐 Live Application
-
-[![Visit Website](https://img.shields.io/badge/Visit-Live%20Demo-6C63FF?style=for-the-badge\&logo=google-chrome\&logoColor=white)](https://deekshith-stack.github.io/LibraryManagementSystem/)
-
-</div>
-
-Manual deployment:
-
-```bash
-npm run deploy
-```
-
----
-
-# 🎨 UI & UX Highlights
-
-The application is designed to provide a modern and premium experience.
-
-### Design Features
-
-* ✨ Modern Glassmorphism
-* 📱 Fully Responsive Layout
-* 🖥️ Professional Dashboard
-* 🎨 Premium Color System
-* 🧩 Reusable Components
-* 🔄 Dynamic Role Switching
-* 🔔 Notification Animations
-* 📊 Smart Statistics
-* 🪟 Animated Modals
-* 🏷️ Status Badges
-* ⚡ Smooth Interactions
-
----
-
-# 🔮 Future Enhancements
-
-The project can be expanded with the following technologies and features:
-
-* 🔐 Real Authentication
-* ☕ Java Spring Boot Backend
-* 🗄️ MySQL Database
-* 🤖 AI Library Assistant
-* 📚 AI Book Recommendations
-* 📷 Barcode Scanner
-* 🔳 QR Code Integration
-* 📱 Mobile Application
-* 📄 Digital Library
-* 💳 Online Fine Payment
-* 📧 Email Notifications
-* 📱 WhatsApp Notifications
-* 📊 Advanced Reports
-
----
-
-# 🎯 What This Project Demonstrates
-
-This project demonstrates practical knowledge of:
-
-```text
-✓ React Component Architecture
-✓ React Context API
-✓ State Management
-✓ Role-Based Interfaces
-✓ CRUD Operations
-✓ Transaction Workflows
-✓ Fine Calculation Logic
-✓ Local Data Persistence
-✓ Responsive Web Design
-✓ GitHub Deployment
-✓ Professional UI/UX
-```
-
----
-
-# 👨‍💻 Developer
-
-<div align="center">
-
-## Deekshith Reddy
-
-**Software Developer • React Developer • Web Developer**
-
-<a href="https://github.com/Deekshith-stack">
-  <img src="https://img.shields.io/badge/GitHub-Deekshith--stack-181717?style=for-the-badge&logo=github" />
-</a>
-
-<br/><br/>
-
-### ⭐ If you like this project, give it a Star!
-
-**Made with ❤️ using React & Vite**
-
-</div>
-
-
+This project is licensed under the **MIT License**.

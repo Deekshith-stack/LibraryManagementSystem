@@ -124,6 +124,7 @@ export const BookCatalog = ({ searchVal }) => {
       deleteBook(bookId);
     }
   };
+
   const [stockFilter, setStockFilter] = useState('all'); // 'all' | 'low-stock'
 
   // Filtering books
@@ -203,7 +204,7 @@ export const BookCatalog = ({ searchVal }) => {
                       </span>
                     </td>
                     <td style={{ fontWeight: 500 }}>{book.location}</td>
-                    <td>${book.price.toFixed(2)}</td>
+                    <td>₹{book.price.toFixed(2)}</td>
                     <td>
                       <div className="flex-align" style={{ gap: '0.5rem' }}>
                         <span className={`badge ${book.copiesAvailable > 0 ? 'green' : 'red'}`} style={{ padding: '0.15rem 0.5rem', fontSize: '0.75rem' }}>
@@ -292,7 +293,7 @@ export const BookCatalog = ({ searchVal }) => {
               <input 
                 type="text" 
                 className="glass-input" 
-                placeholder="e.g. Computer Science" 
+                placeholder="e.g. Programming" 
                 value={category} 
                 onChange={(e) => setCategory(e.target.value)} 
                 required 
@@ -302,12 +303,12 @@ export const BookCatalog = ({ searchVal }) => {
 
           <div className="grid-gap-2">
             <div className="form-group">
-              <label className="form-label">Purchase Price ($)</label>
+              <label className="form-label">Purchase Price (₹)</label>
               <input 
                 type="number" 
                 step="0.01" 
                 className="glass-input" 
-                placeholder="e.g. 49.99" 
+                placeholder="e.g. 499.00" 
                 value={price} 
                 onChange={(e) => setPrice(e.target.value)} 
               />
